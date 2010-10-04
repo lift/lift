@@ -305,6 +305,82 @@ case class ParamCalcInfo(paramNames: List[String],
             uploadedFiles: List[FileParamHolder],
             body: Box[Array[Byte]])
 
+final case class ContentType(theType: String, 
+                             subtype: String, 
+                             order: Int,
+                             q: Box[Double], 
+                             extension: List[(String, String)]) extends Ordered[ContentType]
+  {
+    def compare(that: ContentType): Int = ((that.q openOr 1d) compare (q openOr 1d)) match {
+      case 0 => 
+        def doDefault = {
+          order compare that.order
+        }
+
+        (theType, that.theType, subtype, that.subtype) match {
+          case ("*", "*", _, _) => doDefault
+          case ("*", _, _, _) => -1
+          case (_, "*", _, _) => 1
+          case (_, _, "*", "*") => doDefault
+          case (_, _, "*", _) => -1
+          case (_, _, _, "*") => 1
+          case _ => doDefault
+        }
+      case x => x
+    }
+
+    def matches(contentType: (String, String)): Boolean =
+      (theType == "*" || (theType == contentType._1)) &&
+    (subtype == "*" || subtype == contentType._2)
+    
+    /**
+     * Is it a wildcard
+     */
+    def wildCard_? = theType == "*" && subtype == "*"
+  }
+
+object ContentType {
+  def parse(in: Box[String]): List[ContentType] = if (null eq in) Nil else
+    (for {
+      str <- in.toList // turn the box into a List
+      (part, index) <- str.roboSplit(",").zipWithIndex // split at comma
+      content <- parseIt(part, index)
+    } yield content).sort(_ < _)
+
+  private object TwoType {
+    def unapply(in: String): Option[(String, String)] = in.roboSplit("/") match {
+      case a :: b :: Nil => Some(a -> b)
+      case _ => None
+    }
+  }
+
+
+  private object EqualsSplit {
+    private def removeQuotes(s: String) = 
+      if (s.startsWith("\"") && s.endsWith("\"")) s.substring(1, s.length - 1)
+      else s
+
+    def unapply(in: String): Option[(String, String)] = in.roboSplit("=") match {
+      case a :: b :: Nil => Some(a -> removeQuotes(b))
+      case _ => None
+    }
+  }
+
+  private def parseIt(content: String, index: Int): Box[ContentType] = content.roboSplit(";") match {
+    case TwoType(typ, subType) :: xs => {
+      val kv = xs.flatMap(EqualsSplit.unapply) // get the key/value pairs
+      val q: Box[Double] = first(kv){
+        case (k, v) if k == "q" => Helpers.asDouble(v)
+        case _ => Empty
+      }
+      Full(ContentType(typ, subType, index, q, kv.filter{_._1 != "q"}))
+    }
+
+    case _ => Empty
+  }
+}
+
+
 /**
  * Contains request information
  */
@@ -351,17 +427,19 @@ class Req(val path: ParsePath,
   }
 
   /**
+   * What is the content type in order of preference by the requestor
+   */
+  lazy val weightedContentType: List[ContentType] = ContentType.parse(contentType)
+
+  /**
    * Returns true if the content-type is text/xml
    */
-  def xml_? = contentType != null && contentType.dmap(false)(_.toLowerCase.startsWith("text/xml"))
+  lazy val xml_? = (weightedContentType.find(_.matches("text" -> "xml")) orElse 
+                    weightedContentType.find(_.matches("application" -> "xml"))).isDefined 
 
-  def json_? = contentType != null && contentType.dmap(false){
-    _.toLowerCase match {
-      case x if x.startsWith("text/json") => true
-      case x if x.startsWith("application/json") => true
-      case _ => false
-    }
-  }
+  lazy val json_? = 
+    (weightedContentType.find(_.matches("text" -> "json")) orElse
+     weightedContentType.find(_.matches("application" -> "json"))).isDefined
 
   /**
    * Make the servlet session go away

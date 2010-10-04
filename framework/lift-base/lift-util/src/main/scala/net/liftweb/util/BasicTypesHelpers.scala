@@ -139,7 +139,13 @@ object AsBoolean {
   /**
    * Safely convert the specified String to an Int.
    */
-  def asInt(in: String): Box[Int] = tryo{in.toInt}
+  def asInt(in: String): Box[Int] = tryo{in.trim.toInt}
+
+         
+  /**
+   * Safely convert the specified String to a Double.
+   */
+  def asDouble(in: String): Box[Double] = tryo{in.trim.toDouble}
 
 /**
 * A helpful Int extractor
@@ -147,6 +153,14 @@ object AsBoolean {
 object AsInt {
   def unapply(in: String): Option[Int] = asInt(in)
 }
+
+/**
+* A helpful Double extractor
+*/
+object AsDouble {
+  def unapply(in: String): Option[Double] = asDouble(in)
+}
+
 
   /**
    * Safely convert the specified String to a Long.

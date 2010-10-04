@@ -38,11 +38,8 @@ trait RestHelper extends LiftRules.DispatchPF {
    * own logic
    */
   protected def jsonResponse_?(in: Req): Boolean = {
-    val accept = in.headers("accept")
-    accept.find(_.toLowerCase.indexOf("application/json") >= 0).isDefined ||
-    ((in.path.suffix equalsIgnoreCase "json") && 
-     (accept.isEmpty || 
-      accept.find(_.toLowerCase.indexOf("*/*") >= 0).isDefined)) ||
+    in.json_? ||
+    (in.weightedContentType.isEmpty && (in.path.suffix equalsIgnoreCase "json")) ||
     suplimentalJsonResponse_?(in)
   }
   
@@ -61,11 +58,8 @@ trait RestHelper extends LiftRules.DispatchPF {
    * own logic
    */
   protected def xmlResponse_?(in: Req): Boolean = {
-    val accept = in.headers("accept")
-    accept.find(_.toLowerCase.indexOf("text/xml") >= 0).isDefined ||
-    ((in.path.suffix equalsIgnoreCase "xml") && 
-     (accept.isEmpty || 
-      accept.find(_.toLowerCase.indexOf("*/*") >= 0).isDefined)) ||
+    in.xml_? ||
+    (in.weightedContentType.isEmpty && (in.path.suffix equalsIgnoreCase "xml")) ||
     suplimentalXmlResponse_?(in)
   }
   
@@ -459,29 +453,100 @@ trait RestHelper extends LiftRules.DispatchPF {
     def unapply[A, B](s: (A, B)): Option[(A, B)] = Some(s._1 -> s._2)
   }
 
-  @volatile private var _dispatch: List[LiftRules.DispatchPF] = Nil
-  
+  @volatile private var _dispatch: List[Either[LiftRules.DispatchPF, ContentNegotiator]] = Nil
+
+  private trait ContentNegotiator
+
   private lazy val nonDevDispatch = _dispatch.reverse
 
-  private def dispatch: List[LiftRules.DispatchPF] = 
+  private def dispatch: List[Either[LiftRules.DispatchPF, ContentNegotiator]] = 
     if (Props.devMode) _dispatch.reverse else nonDevDispatch
 
   /**
    * Is the Rest helper defined for a given request
    */
-  def isDefinedAt(in: Req) = dispatch.find(_.isDefinedAt(in)).isDefined
+  def isDefinedAt(in: Req) = dispatch.find{
+    case Left(x) => x.isDefinedAt(in)
+    // FIXME right
+    }.isDefined
+
+  // FIXME we need to negotiate the content type in isDefinedAt based on Right stuff. 
+  // we also need to memoize the chosen element in a TransientRequestVar because the calculation
+  // is very expensive
 
   /**
    * Apply the Rest helper
    */
   def apply(in: Req): () => Box[LiftResponse] = 
-    dispatch.find(_.isDefinedAt(in)).get.apply(in)
+    dispatch.find{
+      case Left(x) => x.isDefinedAt(in)
+      // FIXME right
+      } match {
+        case Some(Left(x)) => x.apply(in)
+      }
+
+  def serveContent[T, RT](contentTypes: ContentTypeAndConverter[T]*)(handler: PartialFunction[Req, Gorgon[RT]])(implicit cf: RT => T):
+  Unit = {}
+
+  trait Gorgon[T] {
+    def func(f: T => LiftResponse): () => Box[LiftResponse]
+  }
+
+  object Gorgon {
+    implicit def tToGorgon[T](in: T): Gorgon[T] = null
+    implicit def boxTToGorgon[T](in: Box[T]): Gorgon[T] = null
+    implicit def optionTToGorgon[T](in: Option[T]): Gorgon[T] = null
+    //implicit def ftToGorgon[T](in: () => T): Gorgon[T] = null
+    //implicit def fboxTToGorgon[T](in: () => Box[T]): Gorgon[T] = null
+    //implicit def foptionTToGorgon[T](in: () => Option[T]): Gorgon[T] = null
+    
+  }
+
+  trait ContentTypeAndConverter[T] {
+    def accepts: List[(String, String)]
+    def toLiftResponse: T => LiftResponse
+  }
+
+  object XmlType extends ContentTypeAndConverter[Elem] {
+    lazy val accepts: List[(String, String)] = List("text" -> "xml", "application" -> "xml")
+    def toLiftResponse: Elem => LiftResponse = this.internalToLiftResponse
+    private def internalToLiftResponse(implicit f: Elem => LiftResponse) = f
+    
+  }
+
+  object JsonType extends ContentTypeAndConverter[JsonAST.JValue] {
+    lazy val accepts: List[(String, String)] = List("text" -> "json", "application" -> "json")
+    def toLiftResponse: JsonAST.JValue => LiftResponse = this.internalToLiftResponse
+    private def internalToLiftResponse(implicit f: JsonAST.JValue => LiftResponse) = f
+    
+  }
+
+  serveContent(XmlType) {
+    case "foo" :: "bar" :: _ Get _ => <b>Hello</b>
+    case "foo" :: "bar1" :: _ Get _ => Some(<b>Hello</b>)
+    case "foo" :: "bar2" :: _ Get _ => Full(<b>Hello</b>)
+
+    //case "foo" :: "bar5" :: _ Get _ => () => <b>Hello</b>
+    //case "foo" :: "bar6" :: _ Get _ => () => Some(<b>Hello</b>)
+    //case "foo" :: "bar7" :: _ Get _ => () => Full(<b>Hello</b>)
+  }
+
+  serveContent(JsonType) {
+    case "foo" :: "bar4" :: _ Get _ => JsonAST.JString("Hello")
+    case "foo" :: "bar5" :: _ Get _ => Some(JsonAST.JString("Hello"))
+    case "foo" :: "ba664" :: _ Get _ => Full(JsonAST.JString("Hello"))
+
+
+    //case "foo" :: "bar5" :: _ Get _ => () => <b>Hello</b>
+    //case "foo" :: "bar6" :: _ Get _ => () => Some(<b>Hello</b>)
+    //case "foo" :: "bar7" :: _ Get _ => () => Full(<b>Hello</b>)
+  }
 
   /**
    * Add request handlers
    */
   protected def serve(handler: PartialFunction[Req, () => Box[LiftResponse]]): 
-  Unit = _dispatch ::= handler 
+  Unit = _dispatch ::= Left(handler)
   
   /**
    * Turn T into the return type expected by DispatchPF as long
