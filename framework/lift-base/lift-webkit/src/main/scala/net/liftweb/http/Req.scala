@@ -429,15 +429,19 @@ class Req(val path: ParsePath,
   /**
    * What is the content type in order of preference by the requestor
    */
-  lazy val weightedContentType: List[ContentType] = ContentType.parse(contentType)
+
+    lazy val weightedContentType: List[ContentType] = {
+      println("SPS:-> !!!!!!!!!!! " + headers("accept").mkString)
+      ContentType.parse(Box(headers("accept").mkString))
+    }
 
   /**
    * Returns true if the content-type is text/xml
    */
-  lazy val xml_? = (weightedContentType.find(_.matches("text" -> "xml")) orElse 
-                    weightedContentType.find(_.matches("application" -> "xml"))).isDefined 
+  lazy val xml_? = (weightedContentType.find(_.matches("text" -> "xml")) orElse
+                    weightedContentType.find(_.matches("application" -> "xml"))).isDefined
 
-  lazy val json_? = 
+  lazy val json_? =
     (weightedContentType.find(_.matches("text" -> "json")) orElse
      weightedContentType.find(_.matches("application" -> "json"))).isDefined
 

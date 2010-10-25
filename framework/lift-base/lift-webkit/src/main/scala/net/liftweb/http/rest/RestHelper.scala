@@ -453,40 +453,83 @@ trait RestHelper extends LiftRules.DispatchPF {
     def unapply[A, B](s: (A, B)): Option[(A, B)] = Some(s._1 -> s._2)
   }
 
-  @volatile private var _dispatch: List[Either[LiftRules.DispatchPF, ContentNegotiator]] = Nil
+  @volatile private var _dispatch: List[Either[LiftRules.DispatchPF,
+          (List[(String, String)], PartialFunction[Req, () => Box[LiftResponse]])]] = Nil
 
   private trait ContentNegotiator
 
   private lazy val nonDevDispatch = _dispatch.reverse
 
-  private def dispatch: List[Either[LiftRules.DispatchPF, ContentNegotiator]] = 
+  private def dispatch: List[Either[LiftRules.DispatchPF,
+          (List[(String, String)], PartialFunction[Req, () => Box[LiftResponse]])]] =
     if (Props.devMode) _dispatch.reverse else nonDevDispatch
 
   /**
    * Is the Rest helper defined for a given request
    */
-  def isDefinedAt(in: Req) = dispatch.find{
-    case Left(x) => x.isDefinedAt(in)
-    // FIXME right
+  def isDefinedAt(in: Req) = {
+    println("SPS:-> dispatch: " + dispatch)
+    dispatch.find{
+      case Left(x) => {
+        x.isDefinedAt(in)
+      }
+      case Right(x) => {
+        firstMatchedContentType(in) match {
+          case Some(c) => x._1.contains((c.theType, c.subtype)) && x._2.isDefinedAt(in)
+          case None => false
+        }
+      }
     }.isDefined
+  }
 
-  // FIXME we need to negotiate the content type in isDefinedAt based on Right stuff. 
+  // FIXME we need to negotiate the content type in isDefinedAt based on Right stuff.
   // we also need to memoize the chosen element in a TransientRequestVar because the calculation
   // is very expensive
 
   /**
    * Apply the Rest helper
    */
-  def apply(in: Req): () => Box[LiftResponse] = 
-    dispatch.find{
+  def apply(in: Req): () => Box[LiftResponse] = {
+    println("SPS:-> In RestHelper.apply()")
+    dispatch.find {
       case Left(x) => x.isDefinedAt(in)
-      // FIXME right
-      } match {
-        case Some(Left(x)) => x.apply(in)
+      case Right(x) => {
+        firstMatchedContentType(in) match {
+          case Some(c) => x._1.contains((c.theType, c.subtype)) && x._2.isDefinedAt(in)
+          case None => false
+        }
       }
+    } match {
+        case Some(Left(x)) => {
+          x.apply(in)
+        }
+        case Some(Right(x)) => {
+          x._2.apply(in)
+        }
+    }
+  }
 
-  def serveContent[T, RT](contentTypes: ContentTypeAndConverter[T]*)(handler: PartialFunction[Req, Gorgon[RT]])(implicit cf: RT => T):
-  Unit = {}
+  def firstMatchedContentType(in: Req) = {
+    in.weightedContentType find {
+      case c: ContentType => dispatch.find {
+        case Right(x) => x._1.contains((c.theType, c.subtype)) && x._2.isDefinedAt(in)
+        case Left(x) => false
+      } match {
+        case Some(y) => true
+        case _ => false
+      }
+    }
+  }
+
+//  def serveContent[T, RT](contentTypes: ContentTypeAndConverter[T]*)(handler: PartialFunction[Req, Gorgon[RT]])(implicit cf: RT => T):
+//  Unit = {}
+
+  def serveContent[T](contentType: ContentTypeAndConverter[T])
+                         (handler: PartialFunction[Req, () => Box[LiftResponse]]):Unit = {
+    println("SPS:-> handler: " + handler)
+    _dispatch ::= Right(contentType.accepts, handler)
+  }
+
 
   trait Gorgon[T] {
     def func(f: T => LiftResponse): () => Box[LiftResponse]
