@@ -514,10 +514,7 @@ trait RestHelper extends LiftRules.DispatchPF {
       case c: ContentType => dispatch.find {
         case Right(x) => x._1.contains((c.theType, c.subtype)) && x._2.isDefinedAt(in)
         case Left(x) => false
-      } match {
-        case Some(y) => true
-        case _ => false
-      }
+      }.isDefined
     }
   }
 
