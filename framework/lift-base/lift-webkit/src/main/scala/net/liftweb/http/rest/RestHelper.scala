@@ -456,7 +456,6 @@ trait RestHelper extends LiftRules.DispatchPF {
   @volatile private var _dispatch: List[Either[LiftRules.DispatchPF,
           (List[(String, String)], PartialFunction[Req, () => Box[LiftResponse]])]] = Nil
 
-  private trait ContentNegotiator
 
   private lazy val nonDevDispatch = _dispatch.reverse
 
@@ -474,17 +473,13 @@ trait RestHelper extends LiftRules.DispatchPF {
         x.isDefinedAt(in)
       }
       case Right(x) => {
-        firstMatchedContentType(in) match {
+        ContentNegotiator.selectedContentType(in) match {
           case Some(c) => x._1.contains((c.theType, c.subtype)) && x._2.isDefinedAt(in)
           case None => false
         }
       }
     }.isDefined
   }
-
-  // FIXME we need to negotiate the content type in isDefinedAt based on Right stuff.
-  // we also need to memoize the chosen element in a TransientRequestVar because the calculation
-  // is very expensive
 
   /**
    * Apply the Rest helper
@@ -494,7 +489,7 @@ trait RestHelper extends LiftRules.DispatchPF {
     dispatch.find {
       case Left(x) => x.isDefinedAt(in)
       case Right(x) => {
-        firstMatchedContentType(in) match {
+        ContentNegotiator.selectedContentType(in) match {
           case Some(c) => x._1.contains((c.theType, c.subtype)) && x._2.isDefinedAt(in)
           case None => false
         }
@@ -509,12 +504,22 @@ trait RestHelper extends LiftRules.DispatchPF {
     }
   }
 
-  def firstMatchedContentType(in: Req) = {
-    in.weightedContentType find {
-      case c: ContentType => dispatch.find {
-        case Right(x) => x._1.contains((c.theType, c.subtype)) && x._2.isDefinedAt(in)
-        case Left(x) => false
-      }.isDefined
+  object ContentNegotiator {
+    lazy val selectedContentType = memoize(negotiateContentType)
+
+    def  memoize[X,R](f: X=>R)={
+      val cache=new scala.collection.jcl.WeakHashMap[X,R];
+      {(x:X) => cache.getOrElseUpdate(x,f(x));}
+    }
+
+    def negotiateContentType(in: Req) = {
+      println("SPS:-> conputing!!!")
+      in.weightedContentType find {
+        case c: ContentType => dispatch.find {
+          case Right(x) => x._1.contains((c.theType, c.subtype)) && x._2.isDefinedAt(in)
+          case Left(x) => false
+        }.isDefined
+      }
     }
   }
 
