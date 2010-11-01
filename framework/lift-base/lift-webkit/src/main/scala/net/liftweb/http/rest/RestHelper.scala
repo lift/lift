@@ -504,6 +504,12 @@ trait RestHelper extends LiftRules.DispatchPF {
     }
   }
 
+  def serveContent[T](contentType: ContentTypeAndConverter[T])
+                         (handler: PartialFunction[Req, () => Box[LiftResponse]]):Unit = {
+    println("SPS:-> handler: " + handler)
+    _dispatch ::= Right(contentType.accepts, handler)
+  }
+
   object ContentNegotiator {
     lazy val selectedContentType = memoize(negotiateContentType)
 
@@ -522,31 +528,7 @@ trait RestHelper extends LiftRules.DispatchPF {
       }
     }
   }
-
-//  def serveContent[T, RT](contentTypes: ContentTypeAndConverter[T]*)(handler: PartialFunction[Req, Gorgon[RT]])(implicit cf: RT => T):
-//  Unit = {}
-
-  def serveContent[T](contentType: ContentTypeAndConverter[T])
-                         (handler: PartialFunction[Req, () => Box[LiftResponse]]):Unit = {
-    println("SPS:-> handler: " + handler)
-    _dispatch ::= Right(contentType.accepts, handler)
-  }
-
-
-  trait Gorgon[T] {
-    def func(f: T => LiftResponse): () => Box[LiftResponse]
-  }
-
-  object Gorgon {
-    implicit def tToGorgon[T](in: T): Gorgon[T] = null
-    implicit def boxTToGorgon[T](in: Box[T]): Gorgon[T] = null
-    implicit def optionTToGorgon[T](in: Option[T]): Gorgon[T] = null
-    //implicit def ftToGorgon[T](in: () => T): Gorgon[T] = null
-    //implicit def fboxTToGorgon[T](in: () => Box[T]): Gorgon[T] = null
-    //implicit def foptionTToGorgon[T](in: () => Option[T]): Gorgon[T] = null
-    
-  }
-
+  
   trait ContentTypeAndConverter[T] {
     def accepts: List[(String, String)]
     def toLiftResponse: T => LiftResponse
@@ -564,27 +546,6 @@ trait RestHelper extends LiftRules.DispatchPF {
     def toLiftResponse: JsonAST.JValue => LiftResponse = this.internalToLiftResponse
     private def internalToLiftResponse(implicit f: JsonAST.JValue => LiftResponse) = f
     
-  }
-
-  serveContent(XmlType) {
-    case "foo" :: "bar" :: _ Get _ => <b>Hello</b>
-    case "foo" :: "bar1" :: _ Get _ => Some(<b>Hello</b>)
-    case "foo" :: "bar2" :: _ Get _ => Full(<b>Hello</b>)
-
-    //case "foo" :: "bar5" :: _ Get _ => () => <b>Hello</b>
-    //case "foo" :: "bar6" :: _ Get _ => () => Some(<b>Hello</b>)
-    //case "foo" :: "bar7" :: _ Get _ => () => Full(<b>Hello</b>)
-  }
-
-  serveContent(JsonType) {
-    case "foo" :: "bar4" :: _ Get _ => JsonAST.JString("Hello")
-    case "foo" :: "bar5" :: _ Get _ => Some(JsonAST.JString("Hello"))
-    case "foo" :: "ba664" :: _ Get _ => Full(JsonAST.JString("Hello"))
-
-
-    //case "foo" :: "bar5" :: _ Get _ => () => <b>Hello</b>
-    //case "foo" :: "bar6" :: _ Get _ => () => Some(<b>Hello</b>)
-    //case "foo" :: "bar7" :: _ Get _ => () => Full(<b>Hello</b>)
   }
 
   /**
