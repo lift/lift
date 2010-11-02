@@ -430,10 +430,7 @@ class Req(val path: ParsePath,
    * What is the content type in order of preference by the requestor
    */
 
-    lazy val weightedContentType: List[ContentType] = {
-      println("SPS:-> !!!!!!!!!!! " + headers("accept").mkString)
-      ContentType.parse(Box(headers("accept").mkString))
-    }
+    lazy val weightedContentType: List[ContentType] = ContentType.parse(Box(headers("accept").mkString))
 
   /**
    * Returns true if the content-type is text/xml

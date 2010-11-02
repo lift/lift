@@ -467,7 +467,6 @@ trait RestHelper extends LiftRules.DispatchPF {
    * Is the Rest helper defined for a given request
    */
   def isDefinedAt(in: Req) = {
-    println("SPS:-> dispatch: " + dispatch)
     dispatch.find{
       case Left(x) => {
         x.isDefinedAt(in)
@@ -485,7 +484,6 @@ trait RestHelper extends LiftRules.DispatchPF {
    * Apply the Rest helper
    */
   def apply(in: Req): () => Box[LiftResponse] = {
-    println("SPS:-> In RestHelper.apply()")
     dispatch.find {
       case Left(x) => x.isDefinedAt(in)
       case Right(x) => {
@@ -505,10 +503,9 @@ trait RestHelper extends LiftRules.DispatchPF {
   }
 
   def serveContent[T](contentType: ContentTypeAndConverter[T])
-                         (handler: PartialFunction[Req, () => Box[LiftResponse]]):Unit = {
-    println("SPS:-> handler: " + handler)
+                     (handler: PartialFunction[Req, () => Box[LiftResponse]]):Unit =
     _dispatch ::= Right(contentType.accepts, handler)
-  }
+
 
   object ContentNegotiator {
     lazy val selectedContentType = memoize(negotiateContentType)
@@ -519,7 +516,6 @@ trait RestHelper extends LiftRules.DispatchPF {
     }
 
     def negotiateContentType(in: Req) = {
-      println("SPS:-> conputing!!!")
       in.weightedContentType find {
         case c: ContentType => dispatch.find {
           case Right(x) => x._1.contains((c.theType, c.subtype)) && x._2.isDefinedAt(in)
@@ -551,15 +547,15 @@ trait RestHelper extends LiftRules.DispatchPF {
   /**
    * Add request handlers
    */
-  protected def serve(handler: PartialFunction[Req, () => Box[LiftResponse]]): 
-  Unit = _dispatch ::= Left(handler)
+  protected def serve(handler: PartialFunction[Req, () => Box[LiftResponse]]): Unit =
+    _dispatch ::= Left(handler)
   
   /**
    * Turn T into the return type expected by DispatchPF as long
    * as we can convert T to a LiftResponse.
    */
   protected implicit def thingToResp[T](in: T)(implicit c: T => LiftResponse):
-  () => Box[LiftResponse] = () => Full(c(in))
+    () => Box[LiftResponse] = () => Full(c(in))
 
   /**
    * Turn a Box[T] into the return type expected by
