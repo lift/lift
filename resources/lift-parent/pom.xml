@@ -317,6 +317,13 @@
         <artifactId>mail</artifactId>
         <version>1.4.1</version>
       </dependency>
+
+      <dependency>
+        <groupId>nu.validator.htmlparser</groupId>
+        <artifactId>htmlparser</artifactId>
+        <version>1.2.1</version>
+      </dependency>
+
       <dependency>
         <groupId>joda-time</groupId>
         <artifactId>joda-time</artifactId>
