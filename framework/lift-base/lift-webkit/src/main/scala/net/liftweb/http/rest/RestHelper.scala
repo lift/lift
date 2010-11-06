@@ -481,7 +481,7 @@ trait RestHelper extends LiftRules.DispatchPF {
     dispatch.find {
       case Left(x) => x.isDefinedAt(in)
       case Right(x) => {
-        ContentNegotiator.unapply(in) match {
+        ContentNegotiator.selectedContentType(in) match {
           case Some(c) => x._1.contains((c.theType, c.subtype)) && x._2.isDefinedAt(in)
           case None => false
         }
@@ -503,7 +503,7 @@ trait RestHelper extends LiftRules.DispatchPF {
     _dispatch ::= Right(contentType.accepts, handler)
 
 
-  private object unapplyMemo extends RequestMemoize[Req, Option[ContentType]] {
+  private object contentTypeMemo extends RequestMemoize[Req, Option[ContentType]] {
     override protected def __nameSalt = Helpers.randomString(20)
   }
 
@@ -518,8 +518,8 @@ trait RestHelper extends LiftRules.DispatchPF {
       } 
     }
 
-    def unapply(in: Req): Option[ContentType] = {
-      if (S.inStatefulScope_?) unapplyMemo(in, matchedContentType(in))
+    def selectedContentType(in: Req): Option[ContentType] = {
+      if (S.inStatefulScope_?) contentTypeMemo(in, matchedContentType(in))
       else matchedContentType(in)
     }
   }
