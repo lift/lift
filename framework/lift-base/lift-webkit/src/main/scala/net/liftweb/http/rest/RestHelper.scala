@@ -21,8 +21,9 @@ package rest {
 
 import net.liftweb.json._
 import net.liftweb.common._
-import net.liftweb.util.Props
 import scala.xml.{Elem, Node, Text}
+import util.{Helpers, Props}
+import http.NotAcceptableResponse
 
 /**
  * Mix this trait into a class to provide a list of REST helper methods
@@ -468,15 +469,8 @@ trait RestHelper extends LiftRules.DispatchPF {
    */
   def isDefinedAt(in: Req) = {
     dispatch.find{
-      case Left(x) => {
-        x.isDefinedAt(in)
-      }
-      case Right(x) => {
-        ContentNegotiator.selectedContentType(in) match {
-          case Some(c) => x._1.contains((c.theType, c.subtype)) && x._2.isDefinedAt(in)
-          case None => false
-        }
-      }
+      case Left(x) => x.isDefinedAt(in)
+      case Right(x) => x._2.isDefinedAt(in)
     }.isDefined
   }
 
@@ -487,7 +481,7 @@ trait RestHelper extends LiftRules.DispatchPF {
     dispatch.find {
       case Left(x) => x.isDefinedAt(in)
       case Right(x) => {
-        ContentNegotiator.selectedContentType(in) match {
+        ContentNegotiator.unapply(in) match {
           case Some(c) => x._1.contains((c.theType, c.subtype)) && x._2.isDefinedAt(in)
           case None => false
         }
@@ -499,6 +493,8 @@ trait RestHelper extends LiftRules.DispatchPF {
         case Some(Right(x)) => {
           x._2.apply(in)
         }
+        case None => net.liftweb.http.NotAcceptableResponse(
+          "An appropriate representation of the requested resource could not be found.")
     }
   }
 
@@ -507,21 +503,24 @@ trait RestHelper extends LiftRules.DispatchPF {
     _dispatch ::= Right(contentType.accepts, handler)
 
 
+  private object unapplyMemo extends RequestMemoize[Req, Option[ContentType]] {
+    override protected def __nameSalt = Helpers.randomString(20)
+  }
+
+
   object ContentNegotiator {
-    lazy val selectedContentType = memoize(negotiateContentType)
-
-    def  memoize[X,R](f: X=>R)={
-      val cache=new scala.collection.jcl.WeakHashMap[X,R];
-      {(x:X) => cache.getOrElseUpdate(x,f(x));}
-    }
-
-    def negotiateContentType(in: Req) = {
+    private def matchedContentType(in: Req): Option[ContentType] = {
       in.weightedContentType find {
         case c: ContentType => dispatch.find {
           case Right(x) => x._1.contains((c.theType, c.subtype)) && x._2.isDefinedAt(in)
           case Left(x) => false
         }.isDefined
-      }
+      } 
+    }
+
+    def unapply(in: Req): Option[ContentType] = {
+      if (S.inStatefulScope_?) unapplyMemo(in, matchedContentType(in))
+      else matchedContentType(in)
     }
   }
   
