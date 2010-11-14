@@ -896,6 +896,12 @@
   <profiles>
     <profile>
       <id>lift-debug</id>
+      <activation>
+        <property>
+          <name>lift.debug</name>
+          <value>true</value>
+        </property>
+      </activation>
       <build>
         <plugins>
           <plugin>
@@ -913,10 +919,22 @@
     </profile>
     <profile>
       <id>lift-hudson</id>
+      <activation>
+        <property>
+          <name>lift.hudson</name>
+          <value>true</value>
+        </property>
+      </activation>
       <!-- no-op at top level -->
     </profile>
     <profile>
       <id>lift-release</id>
+      <activation>
+        <property>
+          <name>lift.release</name>
+          <value>true</value>
+        </property>
+      </activation>
       <!-- no-op at top level -->
     </profile>
   </profiles>
