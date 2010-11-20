@@ -34,7 +34,7 @@ object HelloWorldTestSpecs extends Specification {
       val hello = new HelloWorld
       Thread.sleep(1000) // make sure the time changes
 
-      val str = hello.howdy(<span>Hello at <b:time/></span>).toString
+      val str = hello.howdy(<span>Hello at <span id="time">Foo</span></span>).toString
 
       str.indexOf(stableTime.toString) must be >= 0
       str.indexOf("Hello at") must be >= 0

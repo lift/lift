@@ -1,9 +1,9 @@
-<lift:surround with="default" at="content">
+<div class="lift:surround?with=default;at=content">
   <h2>Welcome to your project!</h2>
-		<p>
-      <lift:helloWorld.howdy>
-        <span>Welcome to $artifactId at <b:time/></span>
-      </lift:helloWorld.howdy>
-    </p>
-</lift:surround>
+  <p>
+    <div class="lift:helloWorld.howdy">
+      Welcome to $artifactId at <span id="time">The current time</span>
+    </div>
+  </p>
+</div>
 

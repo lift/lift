@@ -5,8 +5,8 @@
     <meta name="keywords" content="" />
     
 		<title>$groupId:$artifactId:$version</title>
-    <lift:CSS.blueprint />
-    <lift:CSS.fancyType />
+    <style class="lift:CSS.blueprint" />
+    <style class="lift:CSS.fancyType" />
     <script id="jquery" src="/classpath/jquery.js" type="text/javascript"/>
     <script id="json" src="/classpath/json.js" type="text/javascript"/>
     <style type="text/css">
@@ -74,15 +74,17 @@
 
       <div class="column span-6 colborder sidebar">
         <hr class="space" />
-        <lift:Menu.builder />	
+        <span class="lift:Menu.builder" />	
         <div>
-          <lift:Msgs showAll="true"/>
+          <span class="lift:Msgs?showAll=true"/>
           <hr class="space" />
         </div>
       </div>
 
       <div class="column span-17 last">
-        <lift:bind name="content" />
+        <div id="content" >
+	  <!-- The HTML content will go here -->
+	</div>
       </div>
 
       <hr />
