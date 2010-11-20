@@ -165,8 +165,8 @@ class LiftServlet extends Loggable {
     } else if (!authPassed_?(req)) {
       Full(LiftRules.authentication.unauthorizedResponse)
     } else if (LiftRules.redirectAjaxOnSessionLoss && !hasSession(req) && isCometOrAjax(req)) {
-      Full(JavaScriptResponse(js.JE.JsRaw("window.location = " +
-              (req.request.header("Referer") openOr "/").encJs).cmd, Nil, Nil, 200))
+      Full(JavaScriptResponse(js.JE.JsRaw("setTimeout(window.location = " +
+              ((req.request.header("Referer") openOr "/")+"?"+Helpers.nextFuncName+"="+Helpers.nextFuncName).encJs+", 200)").cmd, Nil, Nil, 200))
     } else
     // if the request is matched is defined in the stateless table, dispatch
     if ({
