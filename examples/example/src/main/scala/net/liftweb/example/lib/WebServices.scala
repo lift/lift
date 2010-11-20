@@ -43,14 +43,15 @@ object WebServices extends RestHelper {
   }
 
   // define a REST handler for an XML request
-  serve {
-    case "webservices" :: "all_users" :: _ XmlGet _ =>
+  serveContent(XmlType) {
+    case "webservices" :: "all_users" :: _ Get _ => {
       AllUsers(User.findAll()).toXml
+    }
   }
 
   // define a REST handler for a JSON reqest
-  serve {
-    case "webservices" :: "all_users" :: _ JsonGet _ =>
+  serveContent(JsonType) {
+    case "webservices" :: "all_users" :: _ Get _ =>
       AllUsers(User.findAll()).toJson
   }
 
