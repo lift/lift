@@ -68,6 +68,14 @@ object LiftRules extends Factory with FormVendor with LazyLoggable {
   type LiftRequestPF = PartialFunction[Req, Boolean]
 
   /**
+   * If you want to make the Lift inactivity timeout shorter than
+   * the container inactivity timeout, set the inactivity timeout here
+   */
+  val sessionInactivityTimeout = new FactoryMaker[Box[Long]](Empty){}
+
+
+
+  /**
    * Set the default fadeout mechanism for Lift notices. Thus you provide a function that take a NoticeType.Value
    * and decide the duration after which the fade out will start and the actual fadeout time. This is applicable
    * for general notices (not associated with id-s) regardless if they are set for the page rendering, ajax
@@ -120,6 +128,14 @@ object LiftRules extends Factory with FormVendor with LazyLoggable {
    */
   @volatile var sessionCreator: (HTTPSession, String) => LiftSession = {
     case (httpSession, contextPath) => new LiftSession(contextPath, httpSession.sessionId, Full(httpSession))
+  }
+
+  /**
+   * A method that returns a function to create migratory sessions.  If you want migratory sessions for your
+   * application, <code>LiftRules.sessionCreator = LiftRules.sessionCreatorForMigratorySessions</code>
+   */
+  def sessionCreatorForMigratorySessions: (HTTPSession, String) => LiftSession = {
+    case (httpSession, contextPath) => new LiftSession(contextPath, httpSession.sessionId, Full(httpSession)) with MigratorySession
   }
 
   @volatile var enableContainerSessions = true

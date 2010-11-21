@@ -24,11 +24,12 @@ import java.util.regex.Pattern
 import scala.collection.jcl.Conversions._
 
 import net.liftweb.common.{Box, Empty, Full}
-import net.liftweb.json.Formats
-import net.liftweb.json.JsonAST.JObject
+import net.liftweb.json.{Formats, JsonParser}
+import net.liftweb.json.JsonAST._
 import net.liftweb.mongodb._
 import net.liftweb.mongodb.record.field._
 import net.liftweb.record.{MetaRecord, Record}
+import net.liftweb.record.FieldHelpers.expectedA
 import net.liftweb.record.field._
 
 import com.mongodb._
@@ -324,10 +325,6 @@ trait MongoMetaRecord[BaseRecord <: MongoRecord[BaseRecord]]
     for (f <- fields(inst)) {
       f match {
         case field if (field.optional_? && field.valueBox.isEmpty) => // don't add to DBObject
-        /* FIXME: Doesn't work
-        case Full(field) if field.isInstanceOf[CountryField[Any]] =>
-          dbo.put(f.name, field.asInstanceOf[CountryField[Any]].value)
-        */
         case field: EnumTypedField[Enumeration] =>
           field.asInstanceOf[EnumTypedField[Enumeration]].valueBox foreach {
             v => dbo.add(f.name, v.id)
@@ -340,7 +337,7 @@ trait MongoMetaRecord[BaseRecord <: MongoRecord[BaseRecord]]
           case x if mongotype_?(x.getClass) => dbo.add(f.name, x)
           case x if datetype_?(x.getClass) => dbo.add(f.name, datetype2dbovalue(x))
           case o => dbo.add(f.name, o.toString)
-        }) 
+        })
       }
     }
     dbo.get
@@ -374,7 +371,6 @@ trait MongoMetaRecord[BaseRecord <: MongoRecord[BaseRecord]]
       inst.fields.foreach(_.resetDirty)
     }
   }
-
 }
 
 }
