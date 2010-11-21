@@ -206,7 +206,7 @@ trait MongoMetaRecord[BaseRecord <: MongoRecord[BaseRecord]]
   */
   def findAll(ids: List[ObjectId]): List[BaseRecord] = if (ids.isEmpty) Nil else {
     val list = new java.util.ArrayList[ObjectId]()
-    for (id <- ids.distinct) list.add(id)
+    for (id <- Set(ids:_*)) list.add(id)
     val query = QueryBuilder.start("_id").in(list).get()
     findAll(query)
   }
