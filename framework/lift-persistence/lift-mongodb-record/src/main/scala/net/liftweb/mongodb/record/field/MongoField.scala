@@ -19,18 +19,30 @@ package mongodb {
 package record {
 package field {
 
-import net.liftweb.common.{Box, Empty, Failure, Full}
-import net.liftweb.http.js.JE.{JsNull, JsRaw}
-import net.liftweb.json.Printer
-import net.liftweb.json.JsonAST._
+import common.{Box, Empty}
+import http.js.JsExp
+import http.js.JE.JsNull
+import json.JsonAST._
+import json.Printer
 
 import com.mongodb.DBObject
 
+/*
+ * Trait that allows for saving the field with a name that is
+ * different than the field name
+ */
+trait MongoField {
+  /**
+   * Return Full(name) to use that name in the encoded Mongo object, or
+   * Empty to use the same name as in Scala. Defaults to Empty.
+   */
+  def mongoName: Box[String] = Empty
+}
+
 /**
-* Describes common aspects related to Mongo fields
+* Used by MongoMetaRecord to convert to/from DBObject.
 */
 trait MongoFieldFlavor[MyType] {
-
   /*
   * convert this field's value into a DBObject so it can be stored in Mongo.
   */
@@ -38,18 +50,6 @@ trait MongoFieldFlavor[MyType] {
 
   // set this field's value using a DBObject returned from Mongo.
   def setFromDBObject(obj: DBObject): Box[MyType]
-
-  /**
-  * Returns the field's value as a valid JavaScript expression
-  */
-  def asJs = asJValue match {
-    case JNothing => JsNull
-    case jv => JsRaw(Printer.compact(render(jv)))
-  }
-
-  /** Encode the field value into a JValue */
-  def asJValue: JValue
-
 }
 
 }

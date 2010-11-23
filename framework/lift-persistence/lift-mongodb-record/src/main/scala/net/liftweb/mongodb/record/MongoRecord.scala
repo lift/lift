@@ -29,8 +29,12 @@ trait MongoRecord[MyType <: MongoRecord[MyType]] extends Record[MyType] {
   self: MyType =>
 
   /*
-  * every mongo record must have an _id field. Override this with the value of your _id object.
-  */
+   * Mongo records that are to be saved in their own collection must
+   * have an _id field. This is defined for you if you mix in a MongoPk
+   * trait.
+   * For embedded objects, mix in the MongoEmbed trait or you must
+   * define this in your record.
+   */
   def id: Any
 
   /**
@@ -136,6 +140,10 @@ trait MongoId[OwnerType <: MongoRecord[OwnerType]] {
       new DBRef(db, meta.collectionName, _id.value)
     )
   }
+}
+
+trait MongoEmbed {
+  def id = ""
 }
 
 }

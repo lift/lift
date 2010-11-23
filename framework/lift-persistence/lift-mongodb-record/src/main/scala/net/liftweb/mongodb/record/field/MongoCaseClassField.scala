@@ -62,6 +62,13 @@ class MongoCaseClassField[OwnerType <: Record[OwnerType],CaseType](rec: OwnerTyp
     case (failure: Failure)  => setBox(failure)
     case _ => setBox(defaultValueBox)
   }
+
+  def asJs = asJValue match {
+    case JNothing => JsNull
+    case jv => new JsExp {
+      lazy val toJsCmd = Printer.compact(render(jv))
+    }
+  }
 }
 
 class MongoCaseClassListField[OwnerType <: Record[OwnerType],CaseType](rec: OwnerType)( implicit mf: Manifest[CaseType]) extends Field[List[CaseType], OwnerType] with MandatoryTypedField[List[CaseType]] with MongoFieldFlavor[List[CaseType]] {
@@ -80,7 +87,7 @@ class MongoCaseClassListField[OwnerType <: Record[OwnerType],CaseType](rec: Owne
   override def optional_? = true
   
   def asJValue = JArray(value.map(v => Extraction.decompose(v)))
-  
+
   def setFromJValue(jvalue: JValue): Box[MyType] = jvalue match {
     case JArray(contents) => setBox(Full(contents.flatMap(s => Helpers.tryo[CaseType]{ s.extract[CaseType] })))
     case _ => setBox(Empty)
@@ -110,6 +117,10 @@ class MongoCaseClassListField[OwnerType <: Record[OwnerType],CaseType](rec: Owne
 
   override def setFromString(in: String): Box[MyType] = {
     setFromJValue(JsonParser.parse(in))
+  }
+
+  def asJs = new JsExp {
+    lazy val toJsCmd = Printer.compact(render(asJValue))
   }
 }
 

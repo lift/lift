@@ -18,22 +18,23 @@ package net.liftweb {
 package mongodb {
 package record {
 
+import field._
+
+import common.{Box, Empty, Full}
+import json.{Formats, JsonParser}
+import json.JsonAST._
+import util.Helpers.tryo
+
 import java.util.{Calendar, UUID}
 import java.util.regex.Pattern
 
 import scala.collection.JavaConversions._
 
-import net.liftweb.common.{Box, Empty, Full}
-import net.liftweb.json.{Formats, JsonParser}
-import net.liftweb.json.JsonAST._
-import net.liftweb.mongodb._
-import net.liftweb.mongodb.record.field._
-import net.liftweb.record.{MetaRecord, Record}
+import net.liftweb.record.{Field, MandatoryTypedField, MetaRecord, Record}
 import net.liftweb.record.FieldHelpers.expectedA
 import net.liftweb.record.field._
 
 import com.mongodb._
-import com.mongodb.util.JSON
 import org.bson.types.ObjectId
 
 trait MongoMetaRecord[BaseRecord <: MongoRecord[BaseRecord]]
@@ -41,12 +42,22 @@ trait MongoMetaRecord[BaseRecord <: MongoRecord[BaseRecord]]
 
   self: BaseRecord =>
 
+  /*
+   * Utility method for determining the value of _id.
+   *
+   * This is needed for backwards compatibility.
+   */
+  def idValue(inst: BaseRecord): Any = inst.id match {
+    case f: MandatoryTypedField[Any] => f.value
+    case x => x
+  }
+
   /**
   * Delete the instance from backing store
   */
   def delete_!(inst: BaseRecord): Boolean = {
     foreachCallback(inst, _.beforeDelete)
-    delete("_id", inst.id)
+    delete("_id", idValue(inst))
     foreachCallback(inst, _.afterDelete)
     true
   }
@@ -104,6 +115,11 @@ trait MongoMetaRecord[BaseRecord <: MongoRecord[BaseRecord]]
   * Find a single row by an Int id
   */
   def find(id: Int): Box[BaseRecord] = find(new BasicDBObject("_id", id))
+
+  /**
+  * Find a single row by a Long id
+  */
+  def find(id: Long): Box[BaseRecord] = find(new BasicDBObject("_id", id))
 
   /**
   * Find a single document by a qry using a json value
@@ -294,9 +310,19 @@ trait MongoMetaRecord[BaseRecord <: MongoRecord[BaseRecord]]
   */
   def update(obj: BaseRecord, update: DBObject): Unit = {
     val query = (BasicDBObjectBuilder.start
-                      .add("_id", obj.id)
+                      .add("_id", idValue(obj))
                       .get)
     this.update(query, update)
+  }
+
+  /*
+   * Return the name of the field in the encoded DBbject. If the field
+   * implements MongoField and has overridden mongoName then
+   * that will be used, otherwise the record field name.
+   */
+  def mongoName(field: Field[_, BaseRecord]): String = field match {
+    case (mongoField: MongoField) => mongoField.mongoName openOr field.name
+    case _ => field.name
   }
 
   /**
@@ -313,23 +339,31 @@ trait MongoMetaRecord[BaseRecord <: MongoRecord[BaseRecord]]
 
     for (f <- fields(inst)) {
       f match {
-        case field if (field.optional_? && field.valueBox.isEmpty) => // don't add to DBObject
+        case field if ((field.optional_? && field.valueBox.isEmpty) || field.ignoreField_?) => // don't add to DBObject
         case field: EnumTypedField[Enumeration] =>
           field.asInstanceOf[EnumTypedField[Enumeration]].valueBox foreach {
-            v => dbo.add(f.name, v.id)
+            v => dbo.add(mongoName(f), v.id)
           }
         case field: EnumNameTypedField[Enumeration] =>
           field.asInstanceOf[EnumNameTypedField[Enumeration]].valueBox foreach {
-            v => dbo.add(f.name, v.toString)
+            v => dbo.add(mongoName(f), v.toString)
           }
+        case field: MongoRefField[MongoRecord[Any], Any] => {
+          if (field.saveAsDbRef_?)
+            field.dbRef foreach { dbr => dbo.add(mongoName(f), dbr) }
+          else
+            field.valueBox foreach { v => dbo.add(mongoName(f), v) }
+        }
         case field: MongoFieldFlavor[Any] =>
-          dbo.add(f.name, field.asInstanceOf[MongoFieldFlavor[Any]].asDBObject)
+          dbo.add(mongoName(f), field.asInstanceOf[MongoFieldFlavor[Any]].asDBObject)
         case field => field.valueBox foreach (_.asInstanceOf[AnyRef] match {
-          case null => dbo.add(f.name, null)
-          case x if primitive_?(x.getClass) => dbo.add(f.name, x)
-          case x if mongotype_?(x.getClass) => dbo.add(f.name, x)
-          case x if datetype_?(x.getClass) => dbo.add(f.name, datetype2dbovalue(x))
-          case o => dbo.add(f.name, o.toString)
+          case null => dbo.add(mongoName(f), null)
+          case x if primitive_?(x.getClass) => dbo.add(mongoName(f), x)
+          case x if mongotype_?(x.getClass) => dbo.add(mongoName(f), x)
+          case x if datetype_?(x.getClass) => dbo.add(mongoName(f), datetype2dbovalue(x))
+          case x: Array[Byte] => dbo.add(mongoName(f), x)
+          case x: MongoRecord[Any] => dbo.add(mongoName(f), x.asDBObject)
+          case o => dbo.add(mongoName(f), o.toString)
         })
       }
     }
@@ -357,9 +391,11 @@ trait MongoMetaRecord[BaseRecord <: MongoRecord[BaseRecord]]
   * @return Box[BaseRecord]
   */
   def setFieldsFromDBObject(inst: BaseRecord, dbo: DBObject): Unit = {
-    for (k <- dbo.keySet; field <- inst.fieldByName(k.toString)) {
-      field.setFromAny(dbo.get(k.toString))
-    }
+    inst.fields.foreach( f => {
+      val key = mongoName(f)
+      if (dbo.containsField(key))
+        f.setFromAny(dbo.get(key))
+    })
     inst.runSafe {
       inst.fields.foreach(_.resetDirty)
     }

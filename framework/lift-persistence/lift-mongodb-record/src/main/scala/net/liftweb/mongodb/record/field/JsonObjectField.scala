@@ -18,19 +18,22 @@ package field {
 
 import scala.xml.{NodeSeq, Text}
 
-import _root_.net.liftweb.common.{Box, Empty, Failure, Full}
-
-import _root_.net.liftweb.http.js.JE.{JsNull, Str}
-import _root_.net.liftweb.json.JsonAST._
-import _root_.net.liftweb.json.{JsonParser, Printer}
-import _root_.net.liftweb.record.{Field, FieldHelpers, MandatoryTypedField, Record}
-import _root_.net.liftweb.util.Helpers.tryo
+import common.{Box, Empty, Failure, Full}
+import http.js.JsExp
+import http.js.JE.{JsNull, Str}
+import json.JsonAST._
+import json.{JsonParser, Printer}
+import net.liftweb.record.{Field, FieldHelpers, MandatoryTypedField, Record}
+import util.Helpers.tryo
 
 import com.mongodb.DBObject
 
 abstract class JsonObjectField[OwnerType <: MongoRecord[OwnerType], JObjectType <: JsonObject[JObjectType]]
   (rec: OwnerType, valueMeta: JsonObjectMeta[JObjectType])
-  extends Field[JObjectType, OwnerType] with MandatoryTypedField[JObjectType] with MongoFieldFlavor[JObjectType] {
+  extends Field[JObjectType, OwnerType]
+  with MandatoryTypedField[JObjectType]
+  with MongoFieldFlavor[JObjectType]
+{
 
   def owner = rec
 
@@ -43,6 +46,10 @@ abstract class JsonObjectField[OwnerType <: MongoRecord[OwnerType], JObjectType 
 
   /** Encode the field value into a JValue */
   def asJValue: JValue = value.asJObject
+
+  def asJs = new JsExp {
+    lazy val toJsCmd = Printer.compact(render(asJValue))
+  }
 
   /*
   * Decode the JValue and set the field to the decoded value.

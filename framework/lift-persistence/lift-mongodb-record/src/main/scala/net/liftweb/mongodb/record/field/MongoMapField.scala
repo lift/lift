@@ -21,12 +21,13 @@ package field {
 
 import scala.xml.NodeSeq
 
-import _root_.net.liftweb.common.{Box, Empty, Failure, Full}
-import _root_.net.liftweb.http.js.JE.{JsNull, JsRaw}
-import _root_.net.liftweb.json.JsonAST._
-import _root_.net.liftweb.json.{JsonParser, Printer}
-import _root_.net.liftweb.record._
-import _root_.net.liftweb.util.Helpers.tryo
+import common.{Box, Empty, Failure, Full}
+import http.js.JsExp
+import http.js.JE.{JsNull, JsRaw}
+import json.JsonAST._
+import json.{JsonParser, Printer}
+import net.liftweb.record._
+import util.Helpers.tryo
 
 import com.mongodb._
 
@@ -70,7 +71,7 @@ class MongoMapField[OwnerType <: MongoRecord[OwnerType], MapValueType](rec: Owne
     case other => setBox(Failure("Error parsing String into a JValue: "+in))
   }
 
-  def toForm = Empty // FIXME
+  def toForm = Empty
 
   def asJValue = JObject(value.keys.map {
     k =>
@@ -81,6 +82,10 @@ class MongoMapField[OwnerType <: MongoRecord[OwnerType], MapValueType](rec: Owne
         case _ => JNothing
       })
   }.toList)
+
+  def asJs = new JsExp {
+    lazy val toJsCmd = Printer.compact(render(asJValue))
+  }
 
   /*
   * Convert this field's value into a DBObject so it can be stored in Mongo.

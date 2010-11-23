@@ -22,8 +22,10 @@ package fixtures {
 import field._
 
 import common.{Box, Empty, Failure, Full}
+import json.JsonAST.JString
 import json.ext.JsonBoxSerializer
 import util.FieldError
+import util.StringHelpers.randomString
 
 import java.math.MathContext
 import scala.xml.Text
@@ -63,12 +65,8 @@ trait HarnessedLifecycleCallbacks extends LifecycleCallbacks {
   override def afterDelete = afterDeleteHarness()
 }
 
-class FieldTypeTestRecord private () extends MongoRecord[FieldTypeTestRecord] with MongoId[FieldTypeTestRecord] {
+class FieldTypeTestRecord private () extends MongoRecord[FieldTypeTestRecord] with ObjectIdPk[FieldTypeTestRecord] {
   def meta = FieldTypeTestRecord
-
-  object mandatoryBinaryField extends BinaryField(this)
-  object legacyOptionalBinaryField extends BinaryField(this) { override def optional_? = true }
-  object optionalBinaryField extends OptionalBinaryField(this)
 
   object mandatoryBooleanField extends BooleanField(this)
   object legacyOptionalBooleanField extends BooleanField(this) { override def optional_? = true }
@@ -84,6 +82,7 @@ class FieldTypeTestRecord private () extends MongoRecord[FieldTypeTestRecord] wi
   object optionalDateTimeField extends OptionalDateTimeField(this)
   */
 
+  // Gets saved in MongoDB with toString
   object mandatoryDecimalField extends DecimalField(this, MathContext.UNLIMITED, 2)
   object legacyOptionalDecimalField extends DecimalField(this, MathContext.UNLIMITED, 2) { override def optional_? = true }
   object optionalDecimalField extends OptionalDecimalField(this, MathContext.UNLIMITED, 2)
@@ -112,8 +111,6 @@ class FieldTypeTestRecord private () extends MongoRecord[FieldTypeTestRecord] wi
   object legacyOptionalLongField extends LongField(this) { override def optional_? = true }
   object optionalLongField extends OptionalLongField(this)
 
-  // FIXME would be nice to have some of these PostalCode fields depend on an OptionalCountryField, but the type sig of
-  // PostalCodeField does not yet allow it.
   object mandatoryPostalCodeField extends PostalCodeField(this, mandatoryCountryField)
   object legacyOptionalPostalCodeField extends PostalCodeField(this, mandatoryCountryField) { override def optional_? = true }
   object optionalPostalCodeField extends OptionalPostalCodeField(this, mandatoryCountryField)
@@ -132,26 +129,101 @@ class FieldTypeTestRecord private () extends MongoRecord[FieldTypeTestRecord] wi
 
   override def equals(other: Any): Boolean = other match {
     case that:FieldTypeTestRecord =>
-      //this.mandatoryBinaryField.value == that.mandatoryBinaryField.value &&
+      this.id.value == that.id.value &&
       this.mandatoryBooleanField.value == that.mandatoryBooleanField.value &&
+      this.legacyOptionalBooleanField.valueBox == that.legacyOptionalBooleanField.valueBox &&
+      this.optionalBooleanField.value == that.optionalBooleanField.value &&
       this.mandatoryCountryField.value == that.mandatoryCountryField.value &&
+      this.legacyOptionalCountryField.value == that.legacyOptionalCountryField.value &&
+      this.optionalCountryField.value == that.optionalCountryField.value &&
       this.mandatoryDecimalField.value == that.mandatoryDecimalField.value &&
+      this.legacyOptionalDecimalField.value == that.legacyOptionalDecimalField.value &&
+      this.optionalDecimalField.value == that.optionalDecimalField.value &&
       this.mandatoryDoubleField.value == that.mandatoryDoubleField.value &&
+      this.legacyOptionalDoubleField.value == that.legacyOptionalDoubleField.value &&
+      this.optionalDoubleField.value == that.optionalDoubleField.value &&
       this.mandatoryEmailField.value == that.mandatoryEmailField.value &&
+      this.legacyOptionalEmailField.value == that.legacyOptionalEmailField.value &&
+      this.optionalEmailField.value == that.optionalEmailField.value &&
       this.mandatoryEnumField.value == that.mandatoryEnumField.value &&
+      this.legacyOptionalEnumField.value == that.legacyOptionalEnumField.value &&
+      this.optionalEnumField.value == that.optionalEnumField.value &&
       this.mandatoryIntField.value == that.mandatoryIntField.value &&
+      this.legacyOptionalIntField.value == that.legacyOptionalIntField.value &&
+      this.optionalIntField.value == that.optionalIntField.value &&
       this.mandatoryLocaleField.value == that.mandatoryLocaleField.value &&
+      this.legacyOptionalLocaleField.value == that.legacyOptionalLocaleField.value &&
+      this.optionalLocaleField.value == that.optionalLocaleField.value &&
       this.mandatoryLongField.value == that.mandatoryLongField.value &&
+      this.legacyOptionalLongField.value == that.legacyOptionalLongField.value &&
+      this.optionalLongField.value == that.optionalLongField.value &&
       this.mandatoryPostalCodeField.value == that.mandatoryPostalCodeField.value &&
+      this.legacyOptionalPostalCodeField.value == that.legacyOptionalPostalCodeField.value &&
+      this.optionalPostalCodeField.value == that.optionalPostalCodeField.value &&
       this.mandatoryStringField.value == that.mandatoryStringField.value &&
+      this.legacyOptionalStringField.value == that.legacyOptionalStringField.value &&
+      this.optionalStringField.value == that.optionalStringField.value &&
       this.mandatoryTextareaField.value == that.mandatoryTextareaField.value &&
-      this.mandatoryTimeZoneField.value == that.mandatoryTimeZoneField.value
+      this.legacyOptionalTextareaField.value == that.legacyOptionalTextareaField.value &&
+      this.optionalTextareaField.value == that.optionalTextareaField.value &&
+      this.mandatoryTimeZoneField.value == that.mandatoryTimeZoneField.value &&
+      this.legacyOptionalTimeZoneField.value == that.legacyOptionalTimeZoneField.value &&
+      this.optionalTimeZoneField.value == that.optionalTimeZoneField.value
     case _ => false
   }
 }
 
-object FieldTypeTestRecord extends FieldTypeTestRecord with MongoMetaRecord[FieldTypeTestRecord]
+object FieldTypeTestRecord extends FieldTypeTestRecord with MongoMetaRecord[FieldTypeTestRecord] {
+  override def formats = allFormats
+}
 
+class BinaryFieldTestRecord extends MongoRecord[BinaryFieldTestRecord] with IntPk[BinaryFieldTestRecord] {
+  def meta = BinaryFieldTestRecord
+
+  object mandatoryBinaryField extends BinaryField(this) {
+    // compare the elements of the Array
+    override def equals(other: Any): Boolean = other match {
+      case that: BinaryField[Any] =>
+        this.value.zip(that.value).filter(t => t._1 != t._2).length == 0
+      case _ => false
+    }
+  }
+  object legacyOptionalBinaryField extends BinaryField(this) {
+    override def optional_? = true
+    // compare the elements of the Array
+    override def equals(other: Any): Boolean = other match {
+      case that: BinaryField[Any] => (this.valueBox, that.valueBox) match {
+        case (Empty, Empty) => true
+        case (Full(a), Full(b)) =>
+          a.zip(b).filter(t => t._1 != t._2).length == 0
+        case _ => false
+      }
+      case _ => false
+    }
+  }
+  object optionalBinaryField extends OptionalBinaryField(this) {
+    // compare the elements of the Array
+    override def equals(other: Any): Boolean = other match {
+      case that: OptionalBinaryField[Any] => (this.valueBox, that.valueBox) match {
+        case (Empty, Empty) => true
+        case (Full(a), Full(b)) =>
+          a.zip(b).filter(t => t._1 != t._2).length == 0
+        case _ => false
+      }
+      case _ => false
+    }
+  }
+
+  override def equals(other: Any): Boolean = other match {
+    case that:BinaryFieldTestRecord =>
+      this.id.value == that.id.value &&
+      this.mandatoryBinaryField == that.mandatoryBinaryField &&
+      this.legacyOptionalBinaryField == that.legacyOptionalBinaryField &&
+      this.optionalBinaryField == that.optionalBinaryField
+    case _ => false
+  }
+}
+object BinaryFieldTestRecord extends BinaryFieldTestRecord with MongoMetaRecord[BinaryFieldTestRecord]
 
 case class TypeTestJsonObject(
   intField: Int,
@@ -163,19 +235,11 @@ case class TypeTestJsonObject(
 }
 object TypeTestJsonObject extends JsonObjectMeta[TypeTestJsonObject]
 
-class DBRefTestRecord private () extends MongoRecord[DBRefTestRecord] with MongoId[DBRefTestRecord] {
-  def meta = DBRefTestRecord
-}
-object DBRefTestRecord extends DBRefTestRecord with MongoMetaRecord[DBRefTestRecord]
-
-class MongoFieldTypeTestRecord private () extends MongoRecord[MongoFieldTypeTestRecord] with MongoId[MongoFieldTypeTestRecord] {
+class MongoFieldTypeTestRecord private () extends MongoRecord[MongoFieldTypeTestRecord] with ObjectIdPk[MongoFieldTypeTestRecord] {
   def meta = MongoFieldTypeTestRecord
 
   object mandatoryDateField extends DateField(this)
   object legacyOptionalDateField extends DateField(this) { override def optional_? = true }
-
-  object mandatoryDBRefField extends DBRefField[MongoFieldTypeTestRecord, DBRefTestRecord](this, DBRefTestRecord)
-  object legacyOptionalDBRefField extends DBRefField[MongoFieldTypeTestRecord, DBRefTestRecord](this, DBRefTestRecord) { override def optional_? = true }
 
   object mandatoryJsonObjectField extends JsonObjectField(this, TypeTestJsonObject) {
     def defaultValue = TypeTestJsonObject(0, "")
@@ -196,9 +260,8 @@ class MongoFieldTypeTestRecord private () extends MongoRecord[MongoFieldTypeTest
 
   override def equals(other: Any): Boolean = other match {
     case that:MongoFieldTypeTestRecord =>
+      this.id.value == that.id.value &&
       this.mandatoryDateField.value == that.mandatoryDateField.value &&
-      //this.mandatoryDBRefField.value.getId == that.mandatoryDBRefField.value.getId &&
-      //this.mandatoryDBRefField.value.getRef == that.mandatoryDBRefField.value.getRef &&
       this.mandatoryJsonObjectField.value == that.mandatoryJsonObjectField.value &&
       this.mandatoryObjectIdField.value == that.mandatoryObjectIdField.value &&
       this.mandatoryPatternField.value.pattern == that.mandatoryPatternField.value.pattern &&
@@ -212,14 +275,14 @@ object MongoFieldTypeTestRecord extends MongoFieldTypeTestRecord with MongoMetaR
   override def formats = allFormats
 }
 
-class PasswordTestRecord private () extends MongoRecord[PasswordTestRecord] with MongoId[PasswordTestRecord] {
+class PasswordTestRecord private () extends MongoRecord[PasswordTestRecord] with ObjectIdPk[PasswordTestRecord] {
   def meta = PasswordTestRecord
 
   object password extends MongoPasswordField(this, 3)
 }
 object PasswordTestRecord extends PasswordTestRecord with MongoMetaRecord[PasswordTestRecord]
 
-class ListTestRecord private () extends MongoRecord[ListTestRecord] with MongoId[ListTestRecord] {
+class ListTestRecord private () extends MongoRecord[ListTestRecord] with UUIDPk[ListTestRecord] {
   def meta = ListTestRecord
 
   object mandatoryStringListField extends MongoListField[ListTestRecord, String](this)
@@ -231,13 +294,27 @@ class ListTestRecord private () extends MongoRecord[ListTestRecord] with MongoId
   object mandatoryMongoJsonObjectListField extends MongoJsonObjectListField(this, TypeTestJsonObject)
   object legacyOptionalMongoJsonObjectListField extends MongoJsonObjectListField(this, TypeTestJsonObject) { override def optional_? = true }
 
+  object mandatoryMongoSubRecordListField extends MongoSubRecordListField(this, SubRecord) {
+    // compare the elements of the List
+    override def equals(other: Any): Boolean = other match {
+      case that: MongoSubRecordListField[Any, Any] =>
+        this.value.zip(that.value).filter(t => t._1 != t._2).length == 0
+      case _ => false
+    }
+  }
+  object legacyOptionalMongoSubRecordListField extends MongoSubRecordListField(this, SubRecord) {
+    override def optional_? = true
+  }
+
   // TODO: More List types
 
   override def equals(other: Any): Boolean = other match {
     case that:ListTestRecord =>
+      this.id.value == that.id.value &&
       this.mandatoryStringListField.value == that.mandatoryStringListField.value &&
       this.mandatoryIntListField.value == that.mandatoryIntListField.value &&
-      this.mandatoryMongoJsonObjectListField.value == that.mandatoryMongoJsonObjectListField.value
+      this.mandatoryMongoJsonObjectListField.value == that.mandatoryMongoJsonObjectListField.value &&
+      this.mandatoryMongoSubRecordListField == that.mandatoryMongoSubRecordListField
     case _ => false
   }
 }
@@ -245,8 +322,10 @@ object ListTestRecord extends ListTestRecord with MongoMetaRecord[ListTestRecord
   override def formats = allFormats
 }
 
-class MapTestRecord extends MongoRecord[MapTestRecord] with MongoId[MapTestRecord] {
+class MapTestRecord extends MongoRecord[MapTestRecord] with StringPk[MapTestRecord] {
   def meta = MapTestRecord
+
+  override def defaultIdValue = randomString(12)
 
   object mandatoryStringMapField extends MongoMapField[MapTestRecord, String](this)
   object legacyOptionalStringMapField extends MongoMapField[MapTestRecord, String](this) { override def optional_? = true }
@@ -258,6 +337,7 @@ class MapTestRecord extends MongoRecord[MapTestRecord] with MongoId[MapTestRecor
 
   override def equals(other: Any): Boolean = other match {
     case that:MapTestRecord =>
+      this.id.value == that.id.value &&
       this.mandatoryStringMapField.value == that.mandatoryStringMapField.value &&
       this.mandatoryIntMapField.value == that.mandatoryIntMapField.value
     case _ => false
@@ -266,6 +346,103 @@ class MapTestRecord extends MongoRecord[MapTestRecord] with MongoId[MapTestRecor
 object MapTestRecord extends MapTestRecord with MongoMetaRecord[MapTestRecord] {
   override def formats = allFormats
 }
+
+/*
+ * SubRecord fields
+ */
+class SubRecord extends MongoRecord[SubRecord] with MongoEmbed {
+  def meta = SubRecord
+
+  object name extends StringField(this, 12)
+
+  override def equals(other: Any): Boolean = other match {
+    case that:SubRecord =>
+      this.name.value == that.name.value
+    case _ => false
+  }
+}
+object SubRecord extends SubRecord with MongoMetaRecord[SubRecord] {
+  override def formats = allFormats
+}
+
+class SubRecordTestRecord extends MongoRecord[SubRecordTestRecord] with LongPk[SubRecordTestRecord] {
+  def meta = SubRecordTestRecord
+
+  object mandatoryMongoSubRecordField extends MongoSubRecordField(this, SubRecord)
+  object legacyOptionalMongoSubRecordField extends MongoSubRecordField(this, SubRecord) {
+    override def optional_? = true
+  }
+
+  object mandatoryFieldTypeMongoSubRecordField extends MongoSubRecordField(this, FieldTypeTestRecord)
+  object legacyOptionalFieldTypeMongoSubRecordField extends MongoSubRecordField(this, FieldTypeTestRecord) {
+    override def optional_? = true
+  }
+
+  object mandatoryMongoFieldTypeMongoSubRecordField extends MongoSubRecordField(this, MongoFieldTypeTestRecord)
+  object legacyMongoFieldTypeMongoSubRecordField extends MongoSubRecordField(this, MongoFieldTypeTestRecord) {
+    override def optional_? = true
+  }
+
+  override def equals(other: Any): Boolean = other match {
+    case that:SubRecordTestRecord =>
+      this.id.value == that.id.value &&
+      this.mandatoryMongoSubRecordField.value == that.mandatoryMongoSubRecordField.value &&
+      this.legacyOptionalMongoSubRecordField.valueBox == that.legacyOptionalMongoSubRecordField.valueBox &&
+      this.mandatoryFieldTypeMongoSubRecordField.value == that.mandatoryFieldTypeMongoSubRecordField.value &&
+      this.legacyOptionalFieldTypeMongoSubRecordField.valueBox == that.legacyOptionalFieldTypeMongoSubRecordField.valueBox &&
+      this.mandatoryMongoFieldTypeMongoSubRecordField.value == that.mandatoryMongoFieldTypeMongoSubRecordField.value &&
+      this.legacyMongoFieldTypeMongoSubRecordField.valueBox == that.legacyMongoFieldTypeMongoSubRecordField.valueBox
+    case _ => false
+  }
+
+}
+object SubRecordTestRecord extends SubRecordTestRecord with MongoMetaRecord[SubRecordTestRecord] {
+  override def formats = allFormats
+}
+
+/*
+ * MongoRefField
+ */
+class MongoRefTestRecord extends MongoRecord[MongoRefTestRecord] with ObjectIdPk[MongoRefTestRecord] {
+  def meta = MongoRefTestRecord
+
+  object mandatoryObjectIdRefField extends ObjectIdRefField(this, FieldTypeTestRecord)
+  object legacyOptionalObjectIdRefField extends ObjectIdRefField(this, FieldTypeTestRecord) {
+    override def optional_? = true
+  }
+
+  object mandatoryUUIDRefField extends UUIDRefField(this, ListTestRecord)
+  object legacyOptionalUUIDRefField extends UUIDRefField(this, ListTestRecord) {
+    override def optional_? = true
+  }
+}
+object MongoRefTestRecord extends MongoRefTestRecord with MongoMetaRecord[MongoRefTestRecord] {
+  override def formats = allFormats
+}
+
+/*
+ * Legacy DBRefField and MongoId test Record
+ */
+class RefRecord private () extends MongoRecord[RefRecord] with MongoId[RefRecord] {
+  def meta = RefRecord
+}
+object RefRecord extends RefRecord with MongoMetaRecord[RefRecord]
+
+class DBRefTestRecord extends MongoRecord[DBRefTestRecord] with MongoId[DBRefTestRecord] {
+  def meta = DBRefTestRecord
+
+  object mandatoryDBRefField extends DBRefField[DBRefTestRecord, RefRecord](this, RefRecord)
+  object legacyOptionalDBRefField extends DBRefField[DBRefTestRecord, RefRecord](this, RefRecord) { override def optional_? = true }
+
+  override def equals(other: Any): Boolean = other match {
+    case that:DBRefTestRecord =>
+      this._id.value == that._id.value &&
+      this.mandatoryDBRefField.value.getId == that.mandatoryDBRefField.value.getId &&
+      this.mandatoryDBRefField.value.getRef == that.mandatoryDBRefField.value.getRef
+    case _ => false
+  }
+}
+object DBRefTestRecord extends DBRefTestRecord with MongoMetaRecord[DBRefTestRecord]
 
 class LifecycleTestRecord private ()
   extends MongoRecord[LifecycleTestRecord]
@@ -292,7 +469,7 @@ case class JsonObj(id: String, name: String) extends JsonObject[JsonObj] {
 }
 object JsonObj extends JsonObjectMeta[JsonObj]
 
-class NullTestRecord extends MongoRecord[NullTestRecord] with MongoId[NullTestRecord] {
+class NullTestRecord extends MongoRecord[NullTestRecord] with IntPk[NullTestRecord] {
 
   def meta = NullTestRecord
 
@@ -314,7 +491,7 @@ extends JsonObject[BoxTestJsonObj] {
 }
 object BoxTestJsonObj extends JsonObjectMeta[BoxTestJsonObj]
 
-class BoxTestRecord extends MongoRecord[BoxTestRecord] with MongoId[BoxTestRecord] {
+class BoxTestRecord extends MongoRecord[BoxTestRecord] with LongPk[BoxTestRecord] {
   def meta = BoxTestRecord
 
   object jsonobj extends JsonObjectField[BoxTestRecord, BoxTestJsonObj](this, BoxTestJsonObj) {

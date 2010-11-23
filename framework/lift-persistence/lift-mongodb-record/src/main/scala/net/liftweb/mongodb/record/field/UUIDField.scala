@@ -29,6 +29,8 @@ import net.liftweb.mongodb.record._
 import net.liftweb.record.{Field, FieldHelpers, MandatoryTypedField}
 import net.liftweb.util.Helpers._
 
+import com.mongodb.DBRef
+
 class UUIDField[OwnerType <: MongoRecord[OwnerType]](rec: OwnerType)
   extends Field[UUID, OwnerType]
   with MandatoryTypedField[UUID]
@@ -38,18 +40,7 @@ class UUIDField[OwnerType <: MongoRecord[OwnerType]](rec: OwnerType)
 
   def defaultValue = UUID.randomUUID
 
-  def setFromAny(in: Any): Box[UUID] = in match {
-    case uid: UUID => setBox(Full(uid))
-    case Some(uid: UUID) => setBox(Full(uid))
-    case Full(uid: UUID) => setBox(Full(uid))
-    case (uid: UUID) :: _ => setBox(Full(uid))
-    case s: String => setFromString(s)
-    case Some(s: String) => setFromString(s)
-    case Full(s: String) => setFromString(s)
-    case null|None|Empty => setBox(defaultValueBox)
-    case f: Failure => setBox(f)
-    case o => setFromString(o.toString)
-  }
+  def setFromAny(in: Any): Box[UUID] = genericSetFromAny(in)
 
   def setFromJValue(jvalue: JValue): Box[UUID] = jvalue match {
     case JNothing|JNull if optional_? => setBox(Empty)

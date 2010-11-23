@@ -22,13 +22,14 @@ package field {
 import java.util.Date
 
 import scala.collection.JavaConversions._
+import scala.xml.NodeSeq
 
-import _root_.net.liftweb.common.{Box, Empty, Failure, Full}
-import _root_.net.liftweb.json.JsonAST._
-import _root_.net.liftweb.json.JsonParser
-import _root_.net.liftweb.http.js.JE.{JsNull, JsRaw}
-import _root_.net.liftweb.record.{Field, FieldHelpers, MandatoryTypedField, Record}
-import _root_.net.liftweb.util.Helpers.tryo
+import common.{Box, Empty, Failure, Full}
+import json.JsonAST._
+import json.{JsonParser, Printer}
+import http.js.JsExp
+import net.liftweb.record.{Field, FieldHelpers, MandatoryTypedField, Record, TypedField}
+import util.Helpers.tryo
 
 import com.mongodb._
 import org.bson.types.ObjectId
@@ -77,7 +78,7 @@ class MongoListField[OwnerType <: MongoRecord[OwnerType], ListType](rec: OwnerTy
     case other => setBox(Failure("Error parsing String into a JValue: "+in))
   }
 
-  def toForm = Empty // FIXME
+  def toForm: Box[NodeSeq] = Empty
 
   def asJValue = JArray(value.map(li => li.asInstanceOf[AnyRef] match {
     case x if primitive_?(x.getClass) => primitive2jvalue(x)
@@ -97,15 +98,49 @@ class MongoListField[OwnerType <: MongoRecord[OwnerType], ListType](rec: OwnerTy
         case x if primitive_?(x.getClass) => dbl.add(x)
         case x if mongotype_?(x.getClass) => dbl.add(x)
         case x if datetype_?(x.getClass) => dbl.add(datetype2dbovalue(x))
+        //case x: TypedField => x.valueBox foreach { v => dbl.add(v) }
         case o => dbl.add(o.toString)
       }
     }
     dbl
   }
 
+  def asJs = new JsExp {
+    lazy val toJsCmd = Printer.compact(render(asJValue))
+  }
+
   // set this field's value using a DBObject returned from Mongo.
   def setFromDBObject(dbo: DBObject): Box[List[ListType]] =
     setBox(Full(dbo.asInstanceOf[BasicDBList].toList.asInstanceOf[List[ListType]]))
+}
+
+/*
+ * List of MongoSubRecords
+ */
+class MongoSubRecordListField[OwnerType <: MongoRecord[OwnerType], SubRecordType <: MongoRecord[SubRecordType]]
+  (rec: OwnerType, valueMeta: MongoMetaRecord[SubRecordType])
+  extends MongoListField[OwnerType, SubRecordType](rec: OwnerType) {
+
+  override def asDBObject: DBObject = {
+    val dbl = new BasicDBList
+    value.foreach { v => dbl.add(v.asDBObject) }
+    dbl
+  }
+
+  override def setFromDBObject(dbo: DBObject): Box[List[SubRecordType]] =
+    setBox(Full(dbo.keySet.toList.map(k => {
+      valueMeta.fromDBObject(dbo.get(k.toString).asInstanceOf[DBObject])
+    })))
+
+  override def asJValue = JArray(value.map(_.asJValue))
+
+  override def setFromJValue(jvalue: JValue) = jvalue match {
+    case JNothing|JNull if optional_? => setBox(Empty)
+    case JArray(arr) => setBox(Full(arr.map( jv => {
+      valueMeta.fromJValue(jv) openOr valueMeta.createRecord
+    })))
+    case other => setBox(FieldHelpers.expectedA("JArray", other))
+  }
 }
 
 /*

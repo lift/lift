@@ -21,15 +21,16 @@ package field {
 
 import scala.xml.NodeSeq
 
-import _root_.net.liftweb.common.{Box, Empty, Failure, Full}
-import _root_.net.liftweb.http.js.JE.{JsNull, JsObj, JsRaw, Str}
-import _root_.net.liftweb.http.S
-import _root_.net.liftweb.json.JsonAST._
-import _root_.net.liftweb.json.Printer
-import _root_.net.liftweb.record.{Field, FieldHelpers, MandatoryTypedField, Record}
-import _root_.net.liftweb.util.Helpers._
+import common.{Box, Empty, Failure, Full}
+import http.js.JE.{JsNull, JsObj, JsRaw, Str}
+import http.S
+import json.JsonAST._
+import json.Printer
+import net.liftweb.record.{Field, FieldHelpers, MandatoryTypedField, Record}
+import util.Helpers._
 
 import org.bson.types.ObjectId
+import com.mongodb.DBRef
 
 /*
 * Field for storing an ObjectId
@@ -43,18 +44,7 @@ class ObjectIdField[OwnerType <: MongoRecord[OwnerType]](rec: OwnerType)
 
   def defaultValue = ObjectId.get
 
-  def setFromAny(in: Any): Box[ObjectId] = in match {
-    case oid: ObjectId => setBox(Full(oid))
-    case Some(oid: ObjectId) => setBox(Full(oid))
-    case Full(oid: ObjectId) => setBox(Full(oid))
-    case (oid: ObjectId) :: _ => setBox(Full(oid))
-    case s: String => setFromString(s)
-    case Some(s: String) => setFromString(s)
-    case Full(s: String) => setFromString(s)
-    case null|None|Empty => setBox(defaultValueBox)
-    case f: Failure => setBox(f)
-    case o => setFromString(o.toString)
-  }
+  def setFromAny(in: Any): Box[ObjectId] = genericSetFromAny(in)
 
   def setFromJValue(jvalue: JValue): Box[ObjectId] = jvalue match {
     case JNothing|JNull if optional_? => setBox(Empty)
@@ -70,7 +60,7 @@ class ObjectIdField[OwnerType <: MongoRecord[OwnerType]](rec: OwnerType)
       setBox(Failure("Invalid ObjectId string: "+in))
 
   private def elem =
-    S.fmapFunc(S.SFuncHolder(this.setFromAny(_))){funcName =>
+    S.fmapFunc(S.SFuncHolder(this.setFromString(_))){funcName =>
       <input type="text"
         name={funcName}
         value={valueBox.map(s => s.toString) openOr ""}
