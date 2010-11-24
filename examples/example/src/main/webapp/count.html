@@ -1,8 +1,8 @@
 <lift:surround with="default" at="content">
 <p>The Number Counting Example</p>
-<p><lift:Count name="first">The first value is <count:value/> <count:incr>Increment</count:incr> <count:decr>Decrement</count:decr></lift:Count></p>
+<p><lift:Count name="first">The first value is <count:value></count:value> <count:incr>Increment</count:incr> <count:decr>Decrement</count:decr></lift:Count></p>
 
-<p><lift:Count name="second">The second value is <count:value/> <count:incr>Increment</count:incr> <count:decr>Decrement</count:decr></lift:Count></p>
+<p><div class="lift:Count?name=second">The second value is <count:value></count:value> <count:incr>Increment</count:incr> <count:decr>Decrement</count:decr></div></p>
 <head>
     <style type="text/css">
     <![CDATA[

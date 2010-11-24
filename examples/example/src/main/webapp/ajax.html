@@ -1,37 +1,37 @@
 <lift:surround with="default" at="content">
   <center><b>AJAX Samples</b></center>
-  <br />
-  <lift:Ajax.sample id_name="cnt_id" id_msgs="messages">
+  <br >
+  <div class="lift:Ajax.sample?id_name=cnt_id;id_msgs=messages">
     <ajax:clicker>
       <span>Click me to increase the count (currently <span id='cnt_id'>0</span>)</span>
     </ajax:clicker>
-    <br/>
+    <br>
 
     <div id="messages"></div>
 
     <ajax:select>
-      You selected <sel:number/> From the select box.
+      You selected <sel:number></sel:number> From the select box.
     </ajax:select>
 
-    <br/>
+    <br>
     <ajax:text>
-      You entered <text:value/> in the text box.
+      You entered <text:value></text:value> in the text box.
     </ajax:text>
 
-    <br/>
+    <br>
 
     An example of autocomplete with a server round trip to
     calculate the autocomplete list
-    <ajax:auto />
-    <br />
-  </lift:Ajax.sample>
+    <ajax:auto></ajax:auto>
+    <br>
+  </div>
   
-  <br />
-  <br />
-  <br />
+  <br >
+  <br >
+  <br >
   
   The <i>Lift</i> Scala code to render the controls:
-  <br />
+  <br >
   <head>
     <style type="text/css">
     /* <![CDATA[ */

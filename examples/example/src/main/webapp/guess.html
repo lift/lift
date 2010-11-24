@@ -1,20 +1,21 @@
 <lift:surround with="default" at="content">
   <lift:snippet type="CountGame:run" form="post">
     <choose:guess>
-      Guess a number between 1 and 100.<br/>
-      Last guess: <count:last/><br />
-      Guess: <count:input/><br/>
-      <input type="submit" value="Guess"/>
+      Guess a number between 1 and 100.<br>
+      Last guess: <count:last></count:last><br >
+      Guess: <count:input></count:input><br>
+      <input type="submit" value="Guess">
     </choose:guess>
 
     <choose:win>
-      You Win!!<br />
-      You guessed <count:number/> after <count:count/> guesses.<br/>
+      You Win!!<br >
+      You guessed <count:number></count:number> after 
+      <count:count></count:count> guesses.<br>
     </choose:win>
   </lift:snippet>
 
-  <br />
-  <br />
+  <br >
+  <br >
   The view code:
   <head>
     <style type="text/css">

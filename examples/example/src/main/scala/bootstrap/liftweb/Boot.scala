@@ -202,6 +202,7 @@ object MenuInfo {
       Menu("Forth Submenu") / "menu" / "four"),
     Menu(WikiStuff),
     Menu("Misc code") / "misc" submenus(
+      Menu("Long Time") / "longtime",
       Menu("Number Guessing") / "guess",
       Menu("Wizard") / "wiz",
       Menu("Wizard Challenge") / "wiz2",

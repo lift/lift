@@ -1,17 +1,18 @@
 <lift:surround with="default" at="content">
   <div class="widget sidebar">
-    <center><b>Group Chat</b></center><br />
+    <center><b>Group Chat</b></center><br >
     <lift:comet type="Chat" name="Other">
       <chat:body>
-	Hello <chat:name/>
+	Hello <chat:name></chat:name>
 	  <ul chat:id="na">
 	    <chat:list>
-	      <li><list:when/> <list:who/>: <i><list:msg/></i></li>
+	      <li><list:when></list:when> <list:who></list:who>:
+		<i><list:msg></list:msg></i></li>
 	    </chat:list>
 	  </ul>
       </chat:body>
       <chat:input>
-	<chat:input/> <input type="submit" value="Post It" />
+	<chat:input></chat:input> <input type="submit" value="Post It" >
       </chat:input>
     </lift:comet>
   </div>

@@ -1,7 +1,7 @@
 <lift:surround with="default" at="content">
   <center><b>More JSON Samples</b></center>
-  <br />
-  <lift:AllJson/>
+  <br >
+  <span class="lift:AllJson"></span>
 
   <div>
     <script>
@@ -20,7 +20,7 @@
     back in the browser.  
     <button onclick="javascript:callNoParam()">Press Me</button>
 
-    <br/>
+    <br>
     The client-side JavaScript for looks like:
     <pre>
     &lt;<span class="function-name">script</span>&gt;
@@ -37,7 +37,7 @@
 </pre>
   </div>
 
-  <hr/>
+  <hr>
   
   <div>
     <script>
@@ -56,11 +56,11 @@
 
     Let's send the contents of a test field and process it:
 
-    <input id="myField"/>
+    <input id="myField">
     <button onclick="javascript:stringSender()">Press Me</button>
-    <br/>
-    <div id="dest"/>
-    <br/>
+    <br>
+    <div id="dest"></div>
+    <br>
     The Script to do this is:
         <pre>
     &lt;<span class="function-name">script</span>&gt;
@@ -80,7 +80,7 @@
 
   </div>
 
-  <hr />
+  <hr >
   
   <div>
     <script>
@@ -104,13 +104,13 @@
     
     Let's send some numbers to the server and have the server
     add 1 to each of the numbers.
-    <br />
+    <br >
     Enter comma separated numbers:
-    <input id="numbers" style="width: 300px;"/>
+    <input id="numbers" style="width: 300px;">
     <button onclick="parseAndSend()">Click Me</button>
   </div>
   
-  <hr/>
+  <hr>
 
 
   <div>

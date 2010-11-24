@@ -1,15 +1,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:lift='http://liftweb.net'>
   <head>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-    <meta name="description" content="" />
-    <meta name="keywords" content="" />
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" >
+    <meta name="description" content="" >
+    <meta name="keywords" content="" >
 
-    <title>Lift Web Framework: <lift:Menu.title /></title>
+    <title>Lift Web Framework</title>
 
-  <lift:CSS.blueprint />
-  <lift:CSS.fancyType />
-  <script id="jquery" src="/classpath/jquery.js" type="text/javascript"/>
-  <script id="json" src="/classpath/json.js" type="text/javascript"/>
+  <style class="lift:CSS.blueprint" ></style>
+  <style class="lift:CSS.fancyType" ></style>
+  <script id="jquery" src="/classpath/jquery.js" type="text/javascript"></script>
+  <script id="json" src="/classpath/json.js" type="text/javascript"></script>
 
   <style type="text/css">
     /* <![CDATA[ */
@@ -87,35 +87,36 @@
 <body>
   <div class="container">
     <div class="column span-10">
-      <img src="/images/lift.png" alt="Lift Web Framework"/>
+      <img src="/images/lift.png" alt="Lift Web Framework"></img>
 
     </div>
-    <div class="column span-1 last" style="float:right"><img alt="" id="ajax-loader" style="display:none" src="/images/ajax-loader.gif"/>
+    <div class="column span-1 last" style="float:right"><img alt="" id="ajax-loader" style="display:none" src="/images/ajax-loader.gif">
     </div>
-    <hr/>
+    <hr>
     <div class="column span-6 colborder sidebar">
 
-      <hr class="space" />
+      <hr class="space" >
 
-      <div><lift:Msgs />
-        <hr class="space" />
+      <div><div class="<lift:Msgs"></div>
+        <hr class="space">
       </div>
     </div>
 
     <div class="column span-17 last">
-      <lift:bind name="content" />
+      <lift:bind name="content"></lift:bind>
     </div>
 
-    <hr />
+    <hr >
     <div class="column span-23 last" style="text-align: center">
       <h4 class="alt"><a href='http://liftweb.net'><i>Lift</i></a> is Copyright 2007-2010 WorldWide Conferencing, LLC.  Distributed under an Apache 2.0 License.
-        <br/>
-        Lift version <lift:version_info.lift/> built on <lift:version_info.date/>.
-        <br/>
-        Stats: Total Memory: <lift:runtime_stats:total_mem/>
-        Free Memory: <lift:runtime_stats:free_mem/>
-        Open Sessions: <lift:runtime_stats:sessions/>
-        Updated At: <lift:runtime_stats:updated_at/>
+        <br>
+        Lift version <lift:version_info.lift></lift:version_info.lift> 
+	built on <lift:version_info.date></lift:version_info.date>.
+        <br>
+        Stats: Total Memory: <lift:runtime_stats:total_mem></lift:runtime_stats:total_mem>
+        Free Memory: <lift:runtime_stats:free_mem></lift:runtime_stats:free_mem>
+        Open Sessions: <lift:runtime_stats:sessions></lift:runtime_stats:sessions>
+        Updated At: <lift:runtime_stats:updated_at></lift:runtime_stats:updated_at>
       </h4>
     </div>
   </div>

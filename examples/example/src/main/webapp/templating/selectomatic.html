@@ -20,24 +20,26 @@ text-indent: 0em;
   </p>
 
   <div>
-    <lift:DivSelector.populate form="post">
+    <form class="lift:DivSelector.populate?form=post">
       <div:line>
-	&lt;div&gt; number <div:number/> visible <div:checkbox/><br/>
+	&lt;div&gt; number <div:number></div:number> visible
+	<div:checkbox></div:checkbox>
+	<br>
       </div:line>
-      <input type="submit" value="Update Page"/>
-    </lift:DivSelector.populate>
+      <input type="submit" value="Update Page">
+    </form>
   </div>
 
-  <lift:DivSelector.select>
+  <div class="lift:DivSelector.select">
     <div id="num_0">This is div 0</div>
     <div id="num_1">This is div 1</div>
     <div id="num_2">This is div 2</div>
     <div id="num_3">This is div 3</div>
     <div id="num_4">This is div 4</div>
     <div id="num_5">This is div 5</div>
-  </lift:DivSelector.select>
-<br/>
-<br/>
+  </div>
+<br>
+<br>
 <p>
   The code to store the state of the div tags is:
     <style type="text/css">

@@ -134,11 +134,11 @@ class Misc {
   );
 
 
-  def lang(xhtml: Group): NodeSeq =
-  bind("showLoc", xhtml,
-       "lang" -> locale.getDisplayLanguage(locale),
-       "select" -> selectObj(locales.map(lo => (lo, lo.getDisplayName)),
-                             definedLocale, setLocale))
+  def lang = {
+    "#lang" #> locale.getDisplayLanguage(locale) &
+    "#select" #> SHtml.selectObj(locales.map(lo => (lo, lo.getDisplayName)),
+                                 definedLocale, setLocale)
+  }
 
   private def locales =
   Locale.getAvailableLocales.toList.sort(_.getDisplayName < _.getDisplayName)

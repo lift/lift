@@ -1,10 +1,10 @@
 <lift:surround with="default" at="content">
   <center><b>Forms with Ajax callback on form element blur</b></center>
-  <br />
-  Enter your first and last name:<br/>
-  <lift:FormWithAjax form="post">
-    First Name: <form:first/> <br/>
-    Last Name: <form:last/> <br />
-    <form:submit />
-  </lift:FormWithAjax>
+  <br >
+  Enter your first and last name:<br>
+  <form class="lift:FormWithAjax?form=post">
+    First Name: <form:first></form:first> <br>
+    Last Name: <form:last></form:last> <br >
+    <form:submit></form:submit>
+  </form>
 </lift:surround>

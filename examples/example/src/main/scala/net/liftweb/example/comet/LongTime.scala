@@ -43,13 +43,13 @@ object ThingBuilder extends LiftActor {
 
   protected def messageHandler =
     {
-      case a: SimplestActor =>
+      case a: LiftActor =>
         this ! (a, 1)
 
-      case (a: SimplestActor, x: Int) if x >= 10 =>
+      case (a: LiftActor, x: Int) if x >= 10 =>
         a ! BuildStatus(100, Full("/getit"))
 
-      case (a: SimplestActor, i: Int) =>
+      case (a: LiftActor, i: Int) =>
         a ! BuildStatus(i * 10, Empty)
         ActorPing.schedule(this, (a, i + 1), 2 seconds)
 

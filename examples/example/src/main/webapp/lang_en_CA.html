@@ -1,13 +1,15 @@
 <lift:surround with="default" at="content">
-
-<lift:snippet type="misc:lang" form="post">
-<h1>Good Day, eh.</h1>
-<span>My language: <showLoc:lang/></span>
-
-<div>
-Set locale <showLoc:select/> <input type="submit" value="Change"/>
-</div>
-</lift:snippet>
+  <form class="lift:misc.lang?form=post">
+    <h1>Good Day, eh.</h1>
+    <span>My language: <span id="lang">lang</span></span>
+    
+    <div>
+      Set locale <select id="select">
+	<option>Foo</option>
+	</select>
+      <input type="submit" value="Change">
+    </div>
+  </form>
 
   <br/>
   <h3>
@@ -39,11 +41,11 @@ Set locale <showLoc:select/> <input type="submit" value="Change"/>
     </style>
 
     <pre>
-  <span class="keyword">def</span> <span class="function-name">lang</span>(<span class="variable-name">xhtml</span>: <span class="type">Group</span>): <span class="type">NodeSeq </span>= 
-  bind(<span class="string">"showLoc"</span>, xhtml,
-       <span class="string">"lang"</span> -&gt; locale.getDisplayLanguage(locale),
-       <span class="string">"select"</span> -&gt; selectObj(locales.map(lo =&gt; (lo, lo.getDisplayName)),
-                             definedLocale, setLocale))
+  <span class="keyword">def</span> <span class="function-name">lang</span> = {
+    <span class="string">"#lang"</span> #&gt; locale.getDisplayLanguage(locale) &amp;
+    <span class="string">"#select"</span> #&gt; SHtml.selectObj(locales.map(lo =&gt; (lo, lo.getDisplayName)),
+                                 definedLocale, setLocale)
+  }
 
   <span class="keyword">private</span> <span class="keyword">def</span> <span class="function-name">locales</span> =
   Locale.getAvailableLocales.toList.sort(_.getDisplayName &lt; _.getDisplayName)

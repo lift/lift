@@ -1,15 +1,15 @@
 <lift:surround with="default" at="content">
     <lift:with-param name="title-suffix">: Wiki</lift:with-param>
-<span><a href="/wikibind/all">Show All Pages</a><br />
+<span><a href="/wikibind/all">Show All Pages</a><br >
     <lift:snippet type="wiki:choosebind">
-      <wiki:showAll><pages:all/></wiki:showAll>
+      <wiki:showAll><pages:all></pages:all></wiki:showAll>
       <wiki:displaying>
-         <strong><view:name/></strong> <br />
-         <view:value/>
+         <strong><view:name></view:name></strong> <br >
+         <view:value></view:value>
       </wiki:displaying>
 
       <wiki:editting>
-         <edit:form/> <br />
+         <edit:form></edit:form> <br >
       </wiki:editting>
     </lift:snippet>
 </span>

@@ -1,10 +1,14 @@
 <lift:surround with="default" at="content"> 
-  <lift:snippet type="misc:lang" form="post">
+  <form class="lift:misc.lang?form=post">
     <h1>Hej</h1> 
-    <span>Mitt språk: <showLoc:lang/></span> 
+    <span>Mitt språk: <span id="lang">lang</span></span> 
     
     <div>
-      Ändra språk <showLoc:select/> <input type="submit" value="Ändra"/>
+      Ändra språk <select id="select">
+	<option>Foo</option>
+	</select> <input type="submit" value="Ändra"/>
     </div> 
+  </form>
+  <lift:snippet type="misc:lang" form="post">
   </lift:snippet> 
 </lift:surround>

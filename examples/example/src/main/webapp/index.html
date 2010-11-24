@@ -45,13 +45,9 @@
     the compiler
     catches type errors.  For example:<br/>
 
-    <pre>
-<code>
-	User.find(By(User.email, "foo@bar.com")) // legal
-	User.find(By(User.birthday, new Date("Jan 4, 1975"))) // legal
-	User.find(By(User.birthday, "foo@bar.com")) // compiler error
-  </code>
-    </pre>
+    <pre><code> User.find(By(User.email, "foo@bar.com")) // legal
+ User.find(By(User.birthday, new Date("Jan 4, 1975"))) // legal
+ User.find(By(User.birthday, "foo@bar.com")) // compiler error</code></pre>
 
   </div>
   <p><i>Lift</i> is an open source project distributed under an Apache License V2.0</p>

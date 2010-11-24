@@ -1,20 +1,20 @@
 <lift:surround with="default" at="content">
   <center><b>JSON Samples</b></center>
-  <br />
-  <lift:Json.sample>
-    <json:script/>
+  <br >
+  <div class="lift:Json.sample">
+    <json:script></json:script>
     <textarea id="json_question" rows="8" cols="50"></textarea>
-    <br />
+    <br >
     <select id="json_select">
       <option value="show">Show</option>
       <option value="textile">Show in Textile</option>
       <option value="count">Count Characters</option>
       <option value="error">Show an error</option>
     </select>
-    <br />
+    <br >
     <button json:onclick="onclick">Click Me</button>
     <div id="json_result"></div>
-  </lift:Json.sample>
+  </div>
 
   <p>Here's the code:</p>
 
