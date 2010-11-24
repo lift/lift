@@ -44,6 +44,11 @@ class Boot {
     DB.defineConnectionManager(DefaultConnectionIdentifier, DBVendor)
     LiftRules.addToPackages("net.liftweb.example")
 
+    /**
+     * We're doing this as HTML5
+     */
+    LiftRules.htmlProperties.default.set((r: Req) => new Html5Properties(r.userAgent))
+
     LiftRules.localeCalculator = r => definedLocale.openOr(LiftRules.defaultLocaleCalculator(r))
 
     if (!Props.inGAE) {
