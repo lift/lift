@@ -1,14 +1,14 @@
 <lift:surround with="default" at="content">
 
   <form class="lift:misc.lang?form=post">
-    <h1>Hello</h1>
-    <span>My language: <span id="lang">lang</span></span>
+    <h1><span class="lift:Loc?locid=hello">Hello</h1>
+    <span><span class="lift:Loc?locid=my_lang">My language: </span><span id="lang">lang</span></span>
     
     <div>
-      Set locale <select id="select">
+      <span class="lift:Loc.set_locale">Set locale</span> <select id="select">
 	<option>Foo</option>
 	</select>
-      <input type="submit" value="Change">
+      <button type="submit"><span class="lift:Loc.change"></span></button>
     </div>
   </form>
 
