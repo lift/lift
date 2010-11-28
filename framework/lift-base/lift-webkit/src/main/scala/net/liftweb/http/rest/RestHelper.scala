@@ -498,44 +498,61 @@ trait RestHelper extends LiftRules.DispatchPF {
     }
   }
 
+  /**
+   * FIXME needs documentation
+   */
   def serveContent[T](contentType: ContentTypeAndConverter[T])
                      (handler: PartialFunction[Req, () => Box[LiftResponse]]):Unit =
     _dispatch ::= Right(contentType.accepts, handler)
 
 
-  private object contentTypeMemo extends RequestMemoize[Req, Option[ContentType]] {
+  private object contentTypeMemo extends RequestMemoize[Req, Box[ContentType]] {
     override protected def __nameSalt = Helpers.randomString(20)
   }
 
 
-  object ContentNegotiator {
-    private def matchedContentType(in: Req): Option[ContentType] = {
+  /**
+   * FIXME needs documentation
+   */
+  protected object ContentNegotiator {
+    private def matchedContentType(in: Req): Box[ContentType] = {
       in.weightedContentType find {
-        case c: ContentType => dispatch.find {
+        case c => dispatch.find {
           case Right(x) => x._1.contains((c.theType, c.subtype)) && x._2.isDefinedAt(in)
           case Left(x) => false
         }.isDefined
       } 
     }
-
+    
+    /**
+     * FIXME document
+     */
     def selectedContentType(in: Req): Option[ContentType] = {
-      if (S.inStatefulScope_?) contentTypeMemo(in, matchedContentType(in))
-      else matchedContentType(in)
+      contentTypeMemo(in, matchedContentType(in))
     }
   }
   
-  trait ContentTypeAndConverter[T] {
+  /**
+   * FIXME document
+   */
+  protected trait ContentTypeAndConverter[T] {
     def accepts: List[(String, String)]
     def toLiftResponse: T => LiftResponse
   }
 
-  object XmlType extends ContentTypeAndConverter[Elem] {
+  /**
+   * FIXME Document
+   */
+  protected object XmlType extends ContentTypeAndConverter[Elem] {
     lazy val accepts: List[(String, String)] = List("text" -> "xml", "application" -> "xml")
     def toLiftResponse: Elem => LiftResponse = this.internalToLiftResponse
     private def internalToLiftResponse(implicit f: Elem => LiftResponse) = f
     
   }
 
+  /**
+   * FIXME document
+   */
   object JsonType extends ContentTypeAndConverter[JsonAST.JValue] {
     lazy val accepts: List[(String, String)] = List("text" -> "json", "application" -> "json")
     def toLiftResponse: JsonAST.JValue => LiftResponse = this.internalToLiftResponse

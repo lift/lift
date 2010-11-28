@@ -305,12 +305,19 @@ case class ParamCalcInfo(paramNames: List[String],
             uploadedFiles: List[FileParamHolder],
             body: Box[Array[Byte]])
 
+
+/**
+ * FIXME document
+ */
 final case class ContentType(theType: String, 
                              subtype: String, 
                              order: Int,
                              q: Box[Double], 
                              extension: List[(String, String)]) extends Ordered[ContentType]
   {
+    /**
+     * FIXME document in detail
+     */
     def compare(that: ContentType): Int = ((that.q openOr 1d) compare (q openOr 1d)) match {
       case 0 => 
         def doDefault = {
@@ -329,6 +336,9 @@ final case class ContentType(theType: String,
       case x => x
     }
 
+    /**
+     * FIXME document
+     */
     def matches(contentType: (String, String)): Boolean =
       (theType == "*" || (theType == contentType._1)) &&
     (subtype == "*" || subtype == contentType._2)
@@ -339,16 +349,21 @@ final case class ContentType(theType: String,
     def wildCard_? = theType == "*" && subtype == "*"
   }
 
+/**
+ * FIXME document
+ */
 object ContentType {
-  def parse(in: Box[String]): List[ContentType] = if (null eq in) Nil else
+  /**
+   * FIXME document
+   */
+  def parse(str: String): List[ContentType] = 
     (for {
-      str <- in.toList // turn the box into a List
-      (part, index) <- str.roboSplit(",").zipWithIndex // split at comma
+      (part, index) <- str.charSplit(',').map(_.trim).zipWithIndex // split at comma
       content <- parseIt(part, index)
     } yield content).sort(_ < _)
 
   private object TwoType {
-    def unapply(in: String): Option[(String, String)] = in.roboSplit("/") match {
+    def unapply(in: String): Option[(String, String)] = in.charSplit('/') match {
       case a :: b :: Nil => Some(a -> b)
       case _ => None
     }
@@ -430,7 +445,7 @@ class Req(val path: ParsePath,
    * What is the content type in order of preference by the requestor
    */
 
-    lazy val weightedContentType: List[ContentType] = ContentType.parse(Box(headers("accept").mkString))
+    lazy val weightedContentType: List[ContentType] = ContentType.parse(headers("accept").mkString(", "))
 
   /**
    * Returns true if the content-type is text/xml
