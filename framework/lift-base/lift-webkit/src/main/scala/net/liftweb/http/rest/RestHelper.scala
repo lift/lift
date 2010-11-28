@@ -455,7 +455,7 @@ trait RestHelper extends LiftRules.DispatchPF {
   }
 
   @volatile private var _dispatch: List[Either[LiftRules.DispatchPF,
-          (List[(String, String)], PartialFunction[Req, () => Box[LiftResponse]])]] = Nil
+          (List[(String, String)], LiftRules.DispatchPF)]] = Nil
 
 
   private lazy val nonDevDispatch = _dispatch.reverse
