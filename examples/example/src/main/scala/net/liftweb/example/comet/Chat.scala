@@ -35,48 +35,60 @@ import net.liftweb.http.js.jquery.JqJsCmds.{AppendHtml}
 class Chat extends CometActor with CometListener {
   private var userName = ""
   private var chats: List[ChatLine] = Nil
-  private lazy val infoId = uniqueId + "_info"
-  private lazy val infoIn = uniqueId + "_in"
-  private lazy val inputArea = findKids(defaultXml, "chat", "input")
-  private lazy val bodyArea = findKids(defaultXml, "chat", "body")
-  private lazy val singleLine = deepFindKids(bodyArea, "chat", "list")
+
+  /* need these vals to be set eagerly, within the scope
+   * of Comet component constructor
+   */
+  private val ulId = S.attr("ul_id") openOr "some_ul_id"
+
+  private val liId = S.attr("li_id")
+
+  private lazy val li = liId.
+  flatMap{ Helpers.findId(defaultXml, _) } openOr NodeSeq.Empty
+
+  private val inputId = Helpers.nextFuncName
 
   // handle an update to the chat lists
   // by diffing the lists and then sending a partial update
   // to the browser
   override def lowPriority = {
-    case ChatServerUpdate(value) =>
-      val update = (value -- chats).reverse.map(b => AppendHtml(infoId, line(b)))
+    case ChatServerUpdate(value) => {
+      val update = (value -- chats).reverse.
+      map(b => AppendHtml(ulId, line(b)))
+
       partialUpdate(update)
       chats = value
+    }
   }
 
   // render the input area by binding the
   // appropriate dynamically generated code to the
   // view supplied by the template
   override lazy val fixedRender: Box[NodeSeq] =
-  ajaxForm(After(100, SetValueAndFocus(infoIn, "")),
-           bind("chat", inputArea,
-                "input" -> text("", sendMessage _, "id" -> infoIn)))
-
-  // send a message to the chat server
-  private def sendMessage(msg: String) = ChatServer ! ChatServerMsg(userName, msg.trim)
+    S.runTemplate("_chat_fixed" :: Nil,
+                  "postit" -> Helpers.evalElemWithId {
+                    (id, elem) => 
+                      SHtml.onSubmit((s: String) => {
+                        ChatServer ! ChatServerMsg(userName, s.trim)
+                        SetValById(id, "")
+                      })(elem)
+                  } _)
 
   // display a line
-  private def line(c: ChatLine) = bind("list", singleLine,
-                                       "when" -> hourFormat(c.when),
-                                       "who" -> c.user,
-                                       "msg" -> c.msg)
+  private def line(c: ChatLine) = {
+    ("name=when" #> hourFormat(c.when) &
+     "name=who" #> c.user &
+     "name=body" #> c.msg)(li)
+  }
 
   // display a list of chats
-  private def displayList(in: NodeSeq): NodeSeq = chats.reverse.flatMap(line)
+  private def displayList: NodeSeq = chats.reverse.flatMap(line)
 
   // render the whole list of chats
-  override def render =
-  bind("chat", bodyArea,
-       "name" -> userName,
-       AttrBindParam("id", Text(infoId), "id"),
-       "list" -> displayList _)
+  override def render = {
+    "name=chat_name" #> userName &
+    ("#"+ulId+" *") #> displayList
+  }
 
   // setup the component
   override def localSetup {

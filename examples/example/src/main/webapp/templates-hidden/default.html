@@ -108,20 +108,16 @@
 
       <div class="widget">
         <span style="text-align: center"><b>Group Chat</b></span><br >
-        <lift:comet type="Chat">
-          <chat:body>
-            Hello <chat:name></chat:name>
-            <ul chat:id="na">
-              <chat:list>
-                <li><list:when></list:when> <list:who></list:who>:
-		  <list:msg></list:msg></li>
-              </chat:list>
-            </ul>
-          </chat:body>
-          <chat:input>
-            <chat:input></chat:input> <input type="submit" value="Chat" >
-          </chat:input>
-        </lift:comet>
+	<div class="lift:comet?type=Chat;ul_id=side_ul_id;li_id=side_li_id">
+          Hello <span name="chat_name">Your name</span>
+          <ul id="side_ul_id">
+            <li id="side_li_id">
+	      <span name="when">12:15</span>
+	      <span name="who">dpp</span>
+	      <span name="body">My Message</span>
+	    </li>
+          </ul>
+	</div>
       </div>
       <hr class="space" >
       <div>

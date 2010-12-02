@@ -1,20 +1,16 @@
 <lift:surround with="default" at="content">
   <div class="widget sidebar">
     <center><b>Group Chat</b></center><br >
-    <lift:comet type="Chat" name="Other">
-      <chat:body>
-	Hello <chat:name></chat:name>
-	  <ul chat:id="na">
-	    <chat:list>
-	      <li><list:when></list:when> <list:who></list:who>:
-		<i><list:msg></list:msg></i></li>
-	    </chat:list>
-	  </ul>
-      </chat:body>
-      <chat:input>
-	<chat:input></chat:input> <input type="submit" value="Post It" >
-      </chat:input>
-    </lift:comet>
+    <div class="lift:comet?type=Chat;name=Other;ul_id=main_ul_id;li_id=main_li_id">
+      Hello <span name="chat_name">Your name</span>
+      <ul id="main_ul_id">
+	<li id="main_li_id">
+	  <span name="when">12:15</span>
+	  <span name="who">dpp</span>
+	  <i><span name="body">My Message</span></i>
+	</li>
+      </ul>
+    </div>
   </div>
   <p>
     The total chat app, including the ask/answer component for soliciting a
@@ -30,7 +26,6 @@
     Until the AskName comet widget provides a name, all rendering messages
     are forwarded to AskName.
     Here's the code for the "AskName":</p>
-  <head>
     <style type="text/css">
     /* <![CDATA[ */
       .comment {
@@ -68,72 +63,65 @@
 
     /* ]]> */
     </style>
-  </head>
   
-    <pre>
-<span class="keyword">class</span> <span class="type">AskName</span> <span class="keyword">extends</span> <span class="type">CometActor</span> {
-  <span class="keyword">def</span> <span class="function-name">render</span> = 
-  ajaxForm(&lt;div&gt;What is your username?&lt;/div&gt; ++
-           text(<span class="string">""</span>,name =&gt; answer(name.trim)) ++
-           &lt;input <span class="keyword">type</span>=<span class="string">"submit"</span> value=<span class="string">"Enter"</span>/&gt;)
-}
-</pre>
-
-  <p>
-    When the user submits the form, the question asked by the Chat comet widget
-    is answered with the value the user submitted.  This is
-    similar to the ask/answer paradigm in Seaside, except that there's
-    no need for continuations.
-  </p>
-
-  <p>Now, onto the heart of the chat app:</p>
-
     <pre>
 <span class="keyword">class</span> <span class="type">Chat</span> <span class="keyword">extends</span> <span class="type">CometActor</span> <span class="keyword">with</span> <span class="type">CometListener</span> {
   <span class="keyword">private</span> <span class="keyword">var</span> <span class="variable-name">userName</span> = <span class="string">""</span>
   <span class="keyword">private</span> <span class="keyword">var</span> <span class="variable-name">chats</span>: <span class="type">List[ChatLine]</span> = Nil
-  <span class="keyword">private</span> <span class="keyword">lazy</span> <span class="keyword">val</span> <span class="variable-name">infoId</span> = uniqueId + <span class="string">"_info"</span>
-  <span class="keyword">private</span> <span class="keyword">lazy</span> <span class="keyword">val</span> <span class="variable-name">infoIn</span> = uniqueId + <span class="string">"_in"</span>
-  <span class="keyword">private</span> <span class="keyword">lazy</span> <span class="keyword">val</span> <span class="variable-name">inputArea</span> = findKids(defaultXml, <span class="string">"chat"</span>, <span class="string">"input"</span>)
-  <span class="keyword">private</span> <span class="keyword">lazy</span> <span class="keyword">val</span> <span class="variable-name">bodyArea</span> = findKids(defaultXml, <span class="string">"chat"</span>, <span class="string">"body"</span>)
-  <span class="keyword">private</span> <span class="keyword">lazy</span> <span class="keyword">val</span> <span class="variable-name">singleLine</span> = deepFindKids(bodyArea, <span class="string">"chat"</span>, <span class="string">"list"</span>)
+
+  <span class="comment-delimiter">/* </span><span class="comment">need these vals to be set eagerly, within the scope
+   * of Comet component constructor
+   */</span>
+  <span class="keyword">private</span> <span class="keyword">val</span> <span class="variable-name">ulId</span> = S.attr(<span class="string">"ul_id"</span>) openOr <span class="string">"some_ul_id"</span>
+
+  <span class="keyword">private</span> <span class="keyword">val</span> <span class="variable-name">liId</span> = S.attr(<span class="string">"li_id"</span>)
+
+  <span class="keyword">private</span> <span class="keyword">lazy</span> <span class="keyword">val</span> <span class="variable-name">li</span> = liId.
+  flatMap{ Helpers.findId(defaultXml, _) } openOr NodeSeq.Empty
+
+  <span class="keyword">private</span> <span class="keyword">val</span> <span class="variable-name">inputId</span> = Helpers.nextFuncName
 
   <span class="comment-delimiter">// </span><span class="comment">handle an update to the chat lists
 </span>  <span class="comment-delimiter">// </span><span class="comment">by diffing the lists and then sending a partial update
 </span>  <span class="comment-delimiter">// </span><span class="comment">to the browser
 </span>  <span class="keyword">override</span> <span class="keyword">def</span> <span class="function-name">lowPriority</span> = {
-    <span class="keyword">case</span> <span class="type">ChatServerUpdate</span>(<span class="variable-name">value</span>) =&gt;
-      <span class="keyword">val</span> <span class="variable-name">update</span> = (value -- chats).reverse.map(b =&gt; AppendHtml(infoId, line(b)))
+    <span class="keyword">case</span> <span class="type">ChatServerUpdate</span>(<span class="variable-name">value</span>) =&gt; {
+      <span class="keyword">val</span> <span class="variable-name">update</span> = (value -- chats).reverse.
+      map(b =&gt; AppendHtml(ulId, line(b)))
+
       partialUpdate(update)
       chats = value
+    }
   }
 
   <span class="comment-delimiter">// </span><span class="comment">render the input area by binding the
 </span>  <span class="comment-delimiter">// </span><span class="comment">appropriate dynamically generated code to the
 </span>  <span class="comment-delimiter">// </span><span class="comment">view supplied by the template
-</span>  <span class="keyword">override</span> <span class="keyword">lazy</span> <span class="keyword">val</span> <span class="variable-name">fixedRender</span>: <span class="type">Box[NodeSeq]</span> = 
-  ajaxForm(After(100, SetValueAndFocus(infoIn, <span class="string">""</span>)),
-           bind(<span class="string">"chat"</span>, inputArea, 
-                <span class="string">"input"</span> -&gt; text(<span class="string">""</span>, sendMessage _, <span class="string">"id"</span> -&gt; infoIn)))
-
-  <span class="comment-delimiter">// </span><span class="comment">send a message to the chat server
-</span>  <span class="keyword">private</span> <span class="keyword">def</span> <span class="function-name">sendMessage</span>(<span class="variable-name">msg</span>: <span class="type">String</span>) = ChatServer ! ChatServerMsg(userName, msg.trim)
+</span>  <span class="keyword">override</span> <span class="keyword">lazy</span> <span class="keyword">val</span> <span class="variable-name">fixedRender</span>: <span class="type">Box[NodeSeq]</span> =
+    S.runTemplate(<span class="string">"_chat_fixed"</span> :: Nil,
+                  <span class="string">"postit"</span> -&gt; Helpers.evalElemWithId {
+                    (id, elem) =&gt; 
+                      SHtml.onSubmit((s: String) =&gt; {
+                        ChatServer ! ChatServerMsg(userName, s.trim)
+                        SetValById(id, <span class="string">""</span>)
+                      })(elem)
+                  } _)
 
   <span class="comment-delimiter">// </span><span class="comment">display a line
-</span>  <span class="keyword">private</span> <span class="keyword">def</span> <span class="function-name">line</span>(<span class="variable-name">c</span>: <span class="type">ChatLine</span>) = bind(<span class="string">"list"</span>, singleLine,
-                                       <span class="string">"when"</span> -&gt; hourFormat(c.when),
-                                       <span class="string">"who"</span> -&gt; c.user,
-                                       <span class="string">"msg"</span> -&gt; c.msg)
+</span>  <span class="keyword">private</span> <span class="keyword">def</span> <span class="function-name">line</span>(<span class="variable-name">c</span>: <span class="type">ChatLine</span>) = {
+    (<span class="string">"name=when"</span> #&gt; hourFormat(c.when) &amp;
+     <span class="string">"name=who"</span> #&gt; c.user &amp;
+     <span class="string">"name=body"</span> #&gt; c.msg)(li)
+  }
 
   <span class="comment-delimiter">// </span><span class="comment">display a list of chats
-</span>  <span class="keyword">private</span> <span class="keyword">def</span> <span class="function-name">displayList</span>(<span class="variable-name">in</span>: <span class="type">NodeSeq</span>): <span class="type">NodeSeq </span>= chats.reverse.flatMap(line)
+</span>  <span class="keyword">private</span> <span class="keyword">def</span> <span class="function-name">displayList</span>: <span class="type">NodeSeq </span>= chats.reverse.flatMap(line)
 
   <span class="comment-delimiter">// </span><span class="comment">render the whole list of chats
-</span>  <span class="keyword">override</span> <span class="keyword">def</span> <span class="function-name">render</span> = 
-  bind(<span class="string">"chat"</span>, bodyArea,
-       <span class="string">"name"</span> -&gt; userName,
-       AttrBindParam(<span class="string">"id"</span>, Text(infoId), <span class="string">"id"</span>),
-       <span class="string">"list"</span> -&gt; displayList _)
+</span>  <span class="keyword">override</span> <span class="keyword">def</span> <span class="function-name">render</span> = {
+    <span class="string">"name=chat_name"</span> #&gt; userName &amp;
+    (<span class="string">"#"</span>+ulId+<span class="string">" *"</span>) #&gt; displayList
+  }
 
   <span class="comment-delimiter">// </span><span class="comment">setup the component
 </span>  <span class="keyword">override</span> <span class="keyword">def</span> <span class="function-name">localSetup</span> {
@@ -161,6 +149,7 @@
 
 }
 </pre>
+
 
   <p>
     This example demonstrates the power of Scala's Actors and <i>Lift</i>.
