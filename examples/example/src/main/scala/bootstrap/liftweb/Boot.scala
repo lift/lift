@@ -209,6 +209,8 @@ object MenuInfo {
       Menu("Simple Screen") / "simple_screen",
       Menu("Variable Screen") / "variable_screen",
       Menu("Arc Challenge #1") / "arc",
+      Menu("Simple Wiring") / "simple_wiring",
+      Menu("Wiring Invoice") / "invoice_wiring",
       Menu("File Upload") / "file_upload",
       Menu(Loc("login", Link(List("login"), true, "/login/index"),
                <xml:group>Requiring Login<strike>SiteMap</strike> </xml:group>)),

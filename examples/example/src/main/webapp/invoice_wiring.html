@@ -1,0 +1,93 @@
+<lift:surround with="default" at="content">
+
+  <div>
+    An example of using Lift's Wiring feature to build an invoice system.
+  </div>
+
+  <div id="invoice_lines" class="lift:InvoiceWiring.showLines">input goes here</div>
+  <div><div class="lift:InvoiceWiring.addLine?div=invoice_lines">Add</div></div>
+
+  <div>Subtotal: <span class="lift:InvoiceWiring.subtotal">subtotal</span></div>
+
+  <div>Tax Rate: <input class="lift:InvoiceWiring.taxRate"></div>
+
+  <div>Taxable: <span class="lift:InvoiceWiring.taxable">taxable</span></div>
+
+  <div>Tax: <span class="lift:InvoiceWiring.tax">Tax</span></div>
+
+  <div>Total: <span class="lift:InvoiceWiring.total">Total</span></div>
+
+  <hr>
+  <div>
+    The code for managing the invoice page is very simple.
+    We define the relationship between the data:
+  </div>
+  <style type="text/css">
+    <!--
+      .keyword {
+        /* font-lock-keyword-face */
+        color: #a020f0;
+      }
+      .variable-name {
+        /* font-lock-variable-name-face */
+        color: #b8860b;
+      }
+
+      .function-name {
+        /* font-lock-function-name-face */
+        color: #0000ff;
+      }
+
+    -->
+    </style>
+
+    <pre>
+<span class="keyword">case</span> <span class="keyword">class</span> <span class="type">Line</span>(<span class="variable-name">guid</span>: <span class="type">String</span>, <span class="variable-name">name</span>: <span class="type">String</span>, <span class="variable-name">price</span>: <span class="type">Double</span>, <span class="variable-name">taxable</span>: <span class="type">Boolean</span>)
+
+  <span class="keyword">private</span> <span class="keyword">object</span> <span class="variable-name">Info</span> {
+    <span class="keyword">val</span> <span class="variable-name">invoices</span> = ValueCell(List(newLine))
+    <span class="keyword">val</span> <span class="variable-name">taxRate</span> = ValueCell(0.05d)
+    <span class="keyword">val</span> <span class="variable-name">subtotal</span> = invoices.lift(_.foldLeft(0d)(_ + _.price))
+    <span class="keyword">val</span> <span class="variable-name">taxable</span> = invoices.lift(_.filter(_.taxable).
+                                foldLeft(0D)(_ + _.price))
+
+    <span class="keyword">val</span> <span class="variable-name">tax</span> = taxRate.lift(taxable) {_ * _}
+
+    <span class="keyword">val</span> <span class="variable-name">total</span> = subtotal.lift(tax) {_ + _}    
+  }
+
+</pre>
+<div>
+  Next we create snippets to display the data:
+</div>
+    <pre>
+  <span class="keyword">def</span> <span class="function-name">subtotal</span>(<span class="variable-name">in</span>: <span class="type">NodeSeq</span>) = WiringUI.asText(in, Info.subtotal)
+
+  <span class="keyword">def</span> <span class="function-name">taxable</span>(<span class="variable-name">in</span>: <span class="type">NodeSeq</span>) = WiringUI.asText(in, Info.taxable)
+
+  <span class="keyword">def</span> <span class="function-name">tax</span>(<span class="variable-name">in</span>: <span class="type">NodeSeq</span>) = WiringUI.asText(in, Info.tax, JqWiringSupport.fade)
+
+  <span class="keyword">def</span> <span class="function-name">total</span>(<span class="variable-name">in</span>: <span class="type">NodeSeq</span>) = WiringUI.asText(in, Info.total, JqWiringSupport.fade)
+</pre>
+<div>
+  And hook the snippets into our view:
+</div>
+
+    <pre>
+  &lt;<span class="function-name">div</span>&gt;Subtotal: &lt;<span class="function-name">span</span> <span class="variable-name">class</span>=<span class="string">"lift:InvoiceWiring.subtotal"</span>&gt;subtotal&lt;/<span class="function-name">span</span>&gt;&lt;/<span class="function-name">div</span>&gt;
+
+  &lt;<span class="function-name">div</span>&gt;Tax Rate: &lt;<span class="function-name">input</span> <span class="variable-name">class</span>=<span class="string">"lift:InvoiceWiring.taxRate"</span>&gt;&lt;/<span class="function-name">div</span>&gt;
+
+  &lt;<span class="function-name">div</span>&gt;Taxable: &lt;<span class="function-name">span</span> <span class="variable-name">class</span>=<span class="string">"lift:InvoiceWiring.taxable"</span>&gt;taxable&lt;/<span class="function-name">span</span>&gt;&lt;/<span class="function-name">div</span>&gt;
+
+  &lt;<span class="function-name">div</span>&gt;Tax: &lt;<span class="function-name">span</span> <span class="variable-name">class</span>=<span class="string">"lift:InvoiceWiring.tax"</span>&gt;Tax&lt;/<span class="function-name">span</span>&gt;&lt;/<span class="function-name">div</span>&gt;
+
+  &lt;<span class="function-name">div</span>&gt;Total: &lt;<span class="function-name">span</span> <span class="variable-name">class</span>=<span class="string">"lift:InvoiceWiring.total"</span>&gt;Total&lt;/<span class="function-name">span</span>&gt;&lt;/<span class="function-name">div</span>&gt;
+</pre>
+
+    <div>
+      And each time any of the cells changes, the display is automatically
+      updated.
+    </div>
+
+</lift:surround>
