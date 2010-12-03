@@ -23,12 +23,12 @@
   <repositories>
     <repository>
       <id>scala-tools</id>
-      <url>http://scala-tools.org/repo-snapshots</url>
-    </repository>
-    <repository>
-      <id>scala-tools</id>
       <url>http://scala-tools.org/repo-releases</url>
     </repository>
+    <snapshotRepository>
+      <id>scala-tools</id>
+      <url>http://scala-tools.org/repo-snapshots</url>
+    </snapshotRepository>
   </repositories>
 
   <!-- Master properties (inherited by modules) -->
