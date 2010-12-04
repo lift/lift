@@ -52,11 +52,12 @@ class SimpleWiring {
     WiringUI.asText(in, count, JqWiringSupport.fade)
 
   def toDo = {
+    import SHtml._
     "* *" #> List[NodeSeq](
-      <span>Feed Fish {SHtml.ajaxCheckbox(feedFish)}</span>,
-      <span>Walk Dog {SHtml.ajaxCheckbox(walkDog)}</span>,
-      <span>Do Dishes {SHtml.ajaxCheckbox(doDishes)}</span>,
-      <span>Watch TV {SHtml.ajaxCheckbox(watchTv)}</span>)
+      <span>Feed Fish {ajaxCheckboxElem(feedFish)}</span>,
+      <span>Walk Dog {ajaxCheckboxElem(walkDog)}</span>,
+      <span>Do Dishes {ajaxCheckboxElem(doDishes)}</span>,
+      <span>Watch TV {ajaxCheckboxElem(watchTv)}</span>)
   }
   
 }
