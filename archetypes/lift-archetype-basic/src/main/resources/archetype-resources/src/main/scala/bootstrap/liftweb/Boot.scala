@@ -36,14 +36,12 @@ class Boot {
 
     // Build SiteMap
     def sitemap() = SiteMap(
-      Menu("Home") / "index" :: // Simple menu form
+      Menu("Home") / "index" >> User.AddUserMenusAfter, // Simple menu form
       // Menu with special Link
       Menu(Loc("Static", Link(List("static"), true, "/static/index"), 
-	       "Static Content")) ::
-      // Menu entries for the User management stuff
-      User.sitemap :_*)
+	       "Static Content")))
 
-    LiftRules.setSiteMapFunc(sitemap)
+    LiftRules.setSiteMapFunc(() => User.sitemapMutator(sitemap()))
 
     /*
      * Show the spinny image when an Ajax call starts
