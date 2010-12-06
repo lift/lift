@@ -54,6 +54,21 @@ object WebServices extends RestHelper {
       AllUsers(User.findAll()).toJson
   }
 
+
+  /*
+   * While many on the Web use GET requests in this way, a client shouldn't
+   * be given the expectation of resource state change or creation
+   * through a GET. GET should be idempotent and safe. This doesn't mean
+   * that a service couldn't create or modify state as as result
+   * (e.g. logging, counting the number of requests, creating business
+   * objects). It's just that any such state-related operations should
+   * not be visible through GET. In the above example, it is implied
+   * that a client could send a GET request in order to create a user.
+   *
+   * AKA -- don't do it this way in the real world, this is an example
+   * of using Scala's guards
+   */
+
   serveJx {
     case Req("webservices" :: "add_user" :: _, _, rt) if rt.post_? || rt.get_? =>
       addUser()
