@@ -37,6 +37,17 @@ object ReqSpec extends Specification {
         ContentType("application", "*", 2, Empty, List()),
         ContentType("*", "*", 0, Empty, List())))
     }
-  }
 
+    "if q value is the same use the order in which they are specified" in {
+      val acceptHeader = "application/*, text/*"
+      orderedMediaTypes(acceptHeader) must beEqualTo(
+        List(ContentType("application", "*", 0, Empty, List()), ContentType("text", "*", 1, Empty, List())))
+    }
+
+    "order generic media types too in the preferential order based on q value" in {
+      val acceptHeader = "application/*;q=0.5, text/*"
+      orderedMediaTypes(acceptHeader) must beEqualTo(
+        List(ContentType("text", "*", 1, Empty, List()), ContentType("application", "*", 0, Full(0.5), List())))
+    }
+  }
 }
