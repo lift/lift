@@ -39,7 +39,7 @@
   <!--</poweredBy>-->
   <skin>
     <groupId>net.liftweb</groupId>
-    <artifactId>lift-site-skin_2.8.0</artifactId>
+    <artifactId>lift-site-skin_2.8.1</artifactId>
     <version>2.2-RC1</version>
   </skin>
 
