@@ -476,14 +476,22 @@ trait RestHelper extends LiftRules.DispatchPF {
 
   /**
    * Apply the Rest helper
+   *
+   * If the accept header is not provided, first available URI match is used. As per RFC 2616, Accept header is not
+   * required. When it's not provided the client is implying any representation is fine for it.
    */
   def apply(in: Req): () => Box[LiftResponse] = {
     dispatch.find {
       case Left(x) => x.isDefinedAt(in)
       case Right(x) => {
-        ContentNegotiator.selectedContentType(in) match {
-          case Some(c) => x._1.contains((c.theType, c.subtype)) && x._2.isDefinedAt(in)
-          case None => false
+        in.weightedContentType.size match {
+          case 0 => x._2.isDefinedAt(in)
+          case n => {
+            ContentNegotiator.selectedContentType(in) match {
+              case Some(c) => x._1.contains((c.theType, c.subtype)) && x._2.isDefinedAt(in)
+              case None => false
+            }
+          }
         }
       }
     } match {
