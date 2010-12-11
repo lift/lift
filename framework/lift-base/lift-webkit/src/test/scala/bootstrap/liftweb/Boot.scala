@@ -18,9 +18,11 @@ package bootstrap.liftweb
 
 import _root_.net.liftweb.util._
 import _root_.net.liftweb.http._
+import _root_.net.liftweb.json._
 import _root_.net.liftweb.sitemap._
 import _root_.net.liftweb.sitemap.Loc._
 import Helpers._
+import net.liftweb.json.JsonAST.JString
 
 /**
   * A class that's instantiated early and run.  It allows the application
@@ -32,6 +34,8 @@ class Boot {
     LiftRules.addToPackages("net.liftweb.webapptest")
 
     LiftRules.dispatch.append(ContainerVarTests)
+
+    LiftRules.dispatch.append(RestHelperTests)
   }
 }
 
@@ -58,5 +62,16 @@ object ContainerVarTests extends RestHelper {
       StrVar.set(str)
       <str>{StrVar.is}</str>
     }
+  }
+}
+
+
+object RestHelperTests extends RestHelper {
+  serveContent(XmlType) {
+    case "webservices" :: "all_users" :: _ Get _ => <test>success</test>
+  }
+
+  serveContent(JsonType) {
+    case "webservices" :: "all_users" :: _ Get _ => JString("success")
   }
 }
