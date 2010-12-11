@@ -21,9 +21,8 @@ package rest {
 
 import net.liftweb.json._
 import net.liftweb.common._
-import scala.xml.{Elem, Node, Text}
+import scala.xml.{Elem, Text}
 import util.{Helpers, Props}
-import http.NotAcceptableResponse
 
 /**
  * Mix this trait into a class to provide a list of REST helper methods
@@ -478,7 +477,7 @@ trait RestHelper extends LiftRules.DispatchPF {
    * Apply the Rest helper
    *
    * If the accept header is not provided, first available URI match is used. As per RFC 2616, Accept header is not
-   * required. When it's not provided the client is implying any representation is fine for it.
+   * required. When it's not provided the client implies any representation is fine for it.
    */
   def apply(in: Req): () => Box[LiftResponse] = {
     dispatch.find {
@@ -507,7 +506,11 @@ trait RestHelper extends LiftRules.DispatchPF {
   }
 
   /**
-   * FIXME needs documentation
+   * Add request handler for each content type representation.
+   *
+   * @param contentType -- defines what mime types are accepted by this content-type and provides conversion from the
+   *                       intermediate response to LiftResponse.
+   * @param handler -- a partial function that matches the requested URI and returns LiftResponse
    */
   def serveContent[T](contentType: ContentTypeAndConverter[T])
                      (handler: PartialFunction[Req, () => Box[LiftResponse]]):Unit =
@@ -520,7 +523,8 @@ trait RestHelper extends LiftRules.DispatchPF {
 
 
   /**
-   * FIXME needs documentation
+   * Walks through the content types in the client's preferential order (see Accept header in RFC 2616),
+   * and picks the first content type that the server supports.
    */
   protected object ContentNegotiator {
     private def matchedContentType(in: Req): Box[ContentType] = {
@@ -533,7 +537,8 @@ trait RestHelper extends LiftRules.DispatchPF {
     }
     
     /**
-     * FIXME document
+     * Selects the content type based on the Request's Accept header preferences. The first implementation that has a
+     * handler on the server side is returned.
      */
     def selectedContentType(in: Req): Option[ContentType] = {
       contentTypeMemo(in, matchedContentType(in))
@@ -541,15 +546,24 @@ trait RestHelper extends LiftRules.DispatchPF {
   }
   
   /**
-   * FIXME document
+   * Defines what Mime types are accepted for a given content type, and provides implementation to convert the
+   * representation into a LiftResponse
    */
   protected trait ContentTypeAndConverter[T] {
+    /**
+     * A list of Mime-types that this content type accepts. Mime types are represented as type and sub-type.
+     * e.g: List("text" -> "xml", "application" -> "xml")
+     */
     def accepts: List[(String, String)]
+
+    /**
+     * Convert representation to a LiftResponse
+     */
     def toLiftResponse: T => LiftResponse
   }
 
   /**
-   * FIXME Document
+   * Definition and converter for XML representation
    */
   protected object XmlType extends ContentTypeAndConverter[Elem] {
     lazy val accepts: List[(String, String)] = List("text" -> "xml", "application" -> "xml")
@@ -559,7 +573,7 @@ trait RestHelper extends LiftRules.DispatchPF {
   }
 
   /**
-   * FIXME document
+   * Definition and converter for JSON representation
    */
   object JsonType extends ContentTypeAndConverter[JsonAST.JValue] {
     lazy val accepts: List[(String, String)] = List("text" -> "json", "application" -> "json")
