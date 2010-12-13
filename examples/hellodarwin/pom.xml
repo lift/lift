@@ -5,7 +5,7 @@
   <parent>
       <groupId>net.liftweb</groupId>
       <artifactId>examples_2.8.1</artifactId>
-      <version>2.2-RC1</version>
+      <version>2.2-RC2</version>
   </parent>
 
   <artifactId>hellodarwin_2.8.1</artifactId>
