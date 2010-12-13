@@ -126,7 +126,7 @@ trait MetaRecord[BaseRecord <: Record[BaseRecord]] {
     
     fieldList = {
       val ordered = fieldOrder.flatMap(f => tArray.find(_.metaField == f))
-      ordered ++ (tArray -- ordered)
+      ordered ++ (tArray.toList -- ordered)
     }
     
     fieldMap = Map() ++ fieldList.map(i => (i.name, i))
