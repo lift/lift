@@ -61,6 +61,11 @@
       <artifactId>lift-jpa_$scalaVersion</artifactId>
       <version>$liftVersion</version>
     </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.6.1</version>
+    </dependency>
 #if ($logBackend.equalsIgnoreCase("logback"))
     <dependency>
       <groupId>ch.qos.logback</groupId>
@@ -112,12 +117,6 @@
       <artifactId>geronimo-spec-jta</artifactId>
       <version>1.0.1B-rc4</version>
       <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-simple</artifactId>
-      <version>1.4.2</version>
-      <scope>runtime</scope>
     </dependency>
     <!-- for LiftConsole -->
     <dependency>

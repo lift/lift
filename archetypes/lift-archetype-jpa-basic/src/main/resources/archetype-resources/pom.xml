@@ -62,6 +62,11 @@
       <artifactId>scala-library</artifactId>
       <version>$scala_version_unevaled</version>
     </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.6.1</version>
+    </dependency>
 #if ($logBackend.equalsIgnoreCase("logback"))
     <dependency>
       <groupId>ch.qos.logback</groupId>
