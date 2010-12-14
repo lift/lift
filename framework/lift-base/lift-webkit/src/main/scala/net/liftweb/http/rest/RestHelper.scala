@@ -22,6 +22,7 @@ package rest {
 import net.liftweb.json._
 import net.liftweb.common._
 import net.liftweb.util.Props
+import net.liftweb.util.Helpers
 import scala.xml.{Elem, Node, Text}
 
 /**
@@ -453,30 +454,140 @@ trait RestHelper extends LiftRules.DispatchPF {
     def unapply[A, B](s: (A, B)): Option[(A, B)] = Some(s._1 -> s._2)
   }
 
-  @volatile private var _dispatch: List[LiftRules.DispatchPF] = Nil
-  
+  @volatile private var _dispatch: List[Either[LiftRules.DispatchPF,
+          (List[(String, String)], LiftRules.DispatchPF)]] = Nil
+
   private lazy val nonDevDispatch = _dispatch.reverse
 
-  private def dispatch: List[LiftRules.DispatchPF] = 
+  private def dispatch: List[Either[LiftRules.DispatchPF,
+          (List[(String, String)], LiftRules.DispatchPF)]] =
     if (Props.devMode) _dispatch.reverse else nonDevDispatch
 
   /**
    * Is the Rest helper defined for a given request
    */
-  def isDefinedAt(in: Req) = dispatch.find(_.isDefinedAt(in)).isDefined
+  def isDefinedAt(in: Req) = {
+    dispatch.find{
+      case Left(x) => x.isDefinedAt(in)
+      case Right(x) => x._2.isDefinedAt(in)
+    }.isDefined
+  }
 
   /**
    * Apply the Rest helper
+   *
+   * If the accept header is not provided, first available URI match is used. As per RFC 2616, Accept header is not
+   * required. When it's not provided the client implies any representation is fine for it.
    */
-  def apply(in: Req): () => Box[LiftResponse] = 
-    dispatch.find(_.isDefinedAt(in)).get.apply(in)
+  def apply(in: Req): () => Box[LiftResponse] = {
+    dispatch.find {
+      case Left(x) => x.isDefinedAt(in)
+      case Right(x) => {
+        in.weightedAccept match {
+          case Nil => x._2.isDefinedAt(in)
+          case _ => {
+            ContentNegotiator.selectedContentType(in) match {
+              case Some(c) => x._1.contains((c.theType, c.subtype)) && x._2.isDefinedAt(in)
+              case None => false
+            }
+          }
+        }
+      }
+    } match {
+        case Some(Left(x)) => {
+          x.apply(in)
+        }
+        case Some(Right(x)) => {
+          x._2.apply(in)
+        }
+        case None => net.liftweb.http.NotAcceptableResponse(
+          "An appropriate representation of the requested resource could not be found.")
+    }
+  }
+
+  /**
+   * Add request handler for each content type representation.
+   *
+   * @param contentType -- defines what mime types are accepted by this content-type and provides conversion from the
+   *                       intermediate response to LiftResponse.
+   * @param handler -- a partial function that matches the requested URI and returns LiftResponse
+   */
+  def serveContent[T](contentType: ContentTypeAndConverter[T])
+                     (handler: PartialFunction[Req, () => Box[LiftResponse]]):Unit =
+    _dispatch ::= Right(contentType.accepts, handler)
+
+
+  private object contentTypeMemo extends RequestMemoize[Req, Box[ContentType]] {
+    override protected def __nameSalt = Helpers.randomString(20)
+  }
+
+
+  /**
+   * Walks through the content types in the client's preferential order (see Accept header in RFC 2616),
+   * and picks the first content type that the server supports.
+   */
+  protected object ContentNegotiator {
+    private def matchedContentType(in: Req): Box[ContentType] = {
+      in.weightedAccept find {
+        case c => dispatch.find {
+          case Right(x) => x._1.contains((c.theType, c.subtype)) && x._2.isDefinedAt(in)
+          case Left(x) => false
+        }.isDefined
+      }
+    }
+
+    /**
+     * Selects the content type based on the Request's Accept header preferences. The first implementation that has a
+     * handler on the server side is returned.
+     */
+    def selectedContentType(in: Req): Option[ContentType] = {
+      contentTypeMemo(in, matchedContentType(in))
+    }
+  }
+
+  /**
+   * Defines what Mime types are accepted for a given content type, and provides implementation to convert the
+   * representation into a LiftResponse
+   */
+  protected trait ContentTypeAndConverter[T] {
+    /**
+     * A list of Mime-types that this content type accepts. Mime types are represented as type and sub-type.
+     * e.g: List("text" -> "xml", "application" -> "xml")
+     */
+    def accepts: List[(String, String)]
+
+    /**
+     * Convert representation to a LiftResponse
+     */
+    def toLiftResponse: T => LiftResponse
+  }
+
+  /**
+   * Definition and converter for XML representation
+   */
+  protected object XmlType extends ContentTypeAndConverter[Elem] {
+    lazy val accepts: List[(String, String)] = List("text" -> "xml", "application" -> "xml")
+    def toLiftResponse: Elem => LiftResponse = this.internalToLiftResponse
+    private def internalToLiftResponse(implicit f: Elem => LiftResponse) = f
+
+  }
+
+  /**
+   * Definition and converter for JSON representation
+   */
+  object JsonType extends ContentTypeAndConverter[JsonAST.JValue] {
+    lazy val accepts: List[(String, String)] = List("text" -> "json", "application" -> "json")
+    def toLiftResponse: JsonAST.JValue => LiftResponse = this.internalToLiftResponse
+    private def internalToLiftResponse(implicit f: JsonAST.JValue => LiftResponse) = f
+
+  }
 
   /**
    * Add request handlers
    */
-  protected def serve(handler: PartialFunction[Req, () => Box[LiftResponse]]): 
-  Unit = _dispatch ::= handler 
-  
+  protected def serve(handler: PartialFunction[Req, () => Box[LiftResponse]]): Unit =
+    _dispatch ::= Left(handler)
+
   /**
    * Turn T into the return type expected by DispatchPF as long
    * as we can convert T to a LiftResponse.

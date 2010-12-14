@@ -26,17 +26,15 @@ import _root_.net.liftweb.http._
 import _root_.net.liftweb.http.testing._
 import _root_.net.liftweb.util._
 import Helpers._
-
-import net.liftweb.webapptest.snippet.Counter
-
+import _root_.net.liftweb.webapptest.snippet.Counter
 
 class OneShotTest extends JUnit3(OneShot)
 object OneShotRunner extends ConsoleRunner(OneShot)
 
 
 object OneShot extends Specification with RequestKit {
-  doBeforeSpec(JettyTestServer.start())
-  doAfterSpec(JettyTestServer.stop())
+  doBeforeSpec(JettyTestServer.start)
+//  doAfterSpec(JettyTestServer.stop())
 
   def baseUrl = JettyTestServer.baseUrl
 

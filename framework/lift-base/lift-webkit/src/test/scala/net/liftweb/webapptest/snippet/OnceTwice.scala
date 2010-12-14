@@ -19,7 +19,7 @@ package webapptest {
 package snippet {
 
 import net.liftweb.http._
-import net.liftweb.util.Helpers._
+import _root_.net.liftweb.util.Helpers._
 import scala.xml._
 
 object Counter {

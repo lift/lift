@@ -21,6 +21,8 @@ import _root_.net.liftweb.http._
 import _root_.net.liftweb.sitemap._
 import _root_.net.liftweb.sitemap.Loc._
 import Helpers._
+import _root_.net.liftweb.json.JsonAST.JString
+
 
 /**
   * A class that's instantiated early and run.  It allows the application
@@ -32,6 +34,8 @@ class Boot {
     LiftRules.addToPackages("net.liftweb.webapptest")
 
     LiftRules.dispatch.append(ContainerVarTests)
+
+    LiftRules.dispatch.append(RestHelperTests)
   }
 }
 
@@ -60,3 +64,14 @@ object ContainerVarTests extends RestHelper {
     }
   }
 }
+
+object RestHelperTests extends RestHelper {
+  serveContent(XmlType) {
+    case "webservices" :: "conneg" :: _ Get _ => <test>success</test>
+  }
+
+  serveContent(JsonType) {
+    case "webservices" :: "conneg" :: _ Get _ => JString("success")
+  }
+}
+

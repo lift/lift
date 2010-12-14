@@ -29,8 +29,8 @@ object ToHeadUsagesRunner extends ConsoleRunner(ToHeadUsages)
 
 
 object ToHeadUsages extends Specification {
-  doBeforeSpec(JettyTestServer.start())
-  doAfterSpec(JettyTestServer.stop())
+  doBeforeSpec(JettyTestServer.start)
+//  doAfterSpec(JettyTestServer.stop())
 
   "lift <head> merger" should {
     "merge <head> from html fragment" >> {
@@ -147,7 +147,7 @@ object ToHeadUsages extends Specification {
     }
 
     "Exclude from context rewriting" >> {
-      val first = net.liftweb.http.Req.fixHtml("/wombat",
+      val first = _root_.net.liftweb.http.Req.fixHtml("/wombat",
         <span>
           <a href="/foo" id="foo">foo</a>
           <a href="/bar" id="bar">bar</a>
@@ -156,8 +156,8 @@ object ToHeadUsages extends Specification {
 
       def excludeBar(in: String): Boolean = in.startsWith("/bar")
 
-      val second = net.liftweb.http.LiftRules.excludePathFromContextPathRewriting.doWith(excludeBar _) {
-        net.liftweb.http.Req.fixHtml("/wombat",
+      val second = _root_.net.liftweb.http.LiftRules.excludePathFromContextPathRewriting.doWith(excludeBar _) {
+        _root_.net.liftweb.http.Req.fixHtml("/wombat",
           <span>
             <a href="/foo" id="foo">foo</a>
             <a href="/bar" id="bar">bar</a>

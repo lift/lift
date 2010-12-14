@@ -46,7 +46,7 @@ object JettyTestServer {
 
   def urlFor(path: String) = baseUrl_ + path
 
-  def start() = server_.start()
+  lazy val start = server_.start()
 
   def stop() = {
     server_.stop()
