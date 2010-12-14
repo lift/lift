@@ -321,7 +321,7 @@ object MongoDocumentExamples extends Specification with MongoTestKit {
 
   "Mongo tutorial example" in {
 
-    import scala.collection.JavaConversions._
+    import scala.collection.jcl.Conversions._
 
     checkMongoIsRunning
 
