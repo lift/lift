@@ -133,6 +133,29 @@
   -->
    <profiles>
      <profile>
+       <id>lift-release</id>
+       <activation>
+         <property>
+           <name>lift-release</name>
+           <value>true</value>
+         </property>
+       </activation>
+       <build>
+         <plugins>
+           <plugin>
+             <groupId>org.apache.maven.plugins</groupId>
+             <artifactId>maven-invoker-plugin</artifactId>
+             <configuration>
+               <invokerPropertiesFile>invoker-release.properties</invokerPropertiesFile>
+               <properties>
+                 <lift.release>true</lift.release>
+               </properties>
+             </configuration>
+           </plugin>
+         </plugins>
+       </build>
+     </profile>
+     <profile>
        <id>lift-hudson</id>
        <activation>
          <property>
