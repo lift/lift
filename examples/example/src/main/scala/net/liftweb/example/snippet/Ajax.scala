@@ -76,6 +76,14 @@ class Ajax extends Loggable {
   }
 
   def time = Text(timeNow.toString)
+
+  def buttonClick = {
+    import js.JE._
+
+    "* [onclick]" #> SHtml.ajaxCall(ValById("the_input"),
+				    s => SetHtml("messages",
+						 <i>Text box is {s}</i>))
+  }
 }
 }
 }
