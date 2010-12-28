@@ -28,6 +28,7 @@ null
 tmp*
 dist
 test-output
+invoke-scala-280/build.log
 
 # sbt
 target
