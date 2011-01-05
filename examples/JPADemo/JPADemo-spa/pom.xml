@@ -5,7 +5,7 @@
   <parent>
     <groupId>net.liftweb</groupId>
     <artifactId>JPADemo-Master_2.8.1</artifactId>
-    <version>2.2-RC6</version>
+    <version>2.2</version>
   </parent>
 
   <artifactId>JPADemo-spa_2.8.1</artifactId>
