@@ -153,7 +153,21 @@ object FullTypeHintExamples extends TypeHintExamples {
   "Option of ambiguous parameterized field decomposition example" in {
     val o = OptionOfAmbiguousP(Some(Falcon(200.0)))
     
-    val ser = swrite(o)    
+    val ser = swrite(o)
+    read[OptionOfAmbiguousP](ser) mustEqual o
+  }
+
+  "Option of ambiguous parameterized field decomposition with custom typehints example" in {
+    implicit val formats = Serialization.formats(new TypeHints {
+      val hints = List(classOf[Falcon], classOf[Chicken])
+      override val fieldName = "@c"
+      def hintFor(clazz: Class[_]) = clazz.getName.substring(clazz.getName.lastIndexOf("."))
+      def classFor(hint: String) = hints find (hintFor(_) == hint)
+    })
+    val o = OptionOfAmbiguousP(Some(Falcon(200.0)))
+
+    val ser = swrite(o)
+    ser mustEqual """{"opt":{"@c":".Falcon","weight":200.0}}"""
     read[OptionOfAmbiguousP](ser) mustEqual o
   }
 }

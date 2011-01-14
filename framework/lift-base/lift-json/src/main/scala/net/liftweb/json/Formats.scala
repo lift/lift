@@ -90,7 +90,8 @@ trait Serializer[A] {
  * implicit val formats = DefaultFormats.withHints(hints)
  * </pre>
  */
-trait TypeHints {  
+trait TypeHints {
+  val fieldName = "jsonClass"
   val hints: List[Class[_]]
   
   /** Return hint for given type.
