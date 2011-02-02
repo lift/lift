@@ -8,7 +8,7 @@ index 483ab3f..5921e25 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>archetypes_2.8.1</artifactId>
 +    <artifactId>archetypes_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
    </parent>
 -  <artifactId>lift-archetype-basic_2.8.1</artifactId>
 +  <artifactId>lift-archetype-basic_2.8.0</artifactId>
@@ -25,7 +25,7 @@ index f2cdbf6..33bf4a9 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>archetypes_2.8.1</artifactId>
 +    <artifactId>archetypes_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
    </parent>
 -  <artifactId>lift-archetype-blank_2.8.1</artifactId>
 +  <artifactId>lift-archetype-blank_2.8.0</artifactId>
@@ -42,7 +42,7 @@ index b96f0ee..8265e6e 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>archetypes_2.8.1</artifactId>
 +    <artifactId>archetypes_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
    </parent>
 -  <artifactId>lift-archetype-jpa-basic_2.8.1</artifactId>
 +  <artifactId>lift-archetype-jpa-basic_2.8.0</artifactId>
@@ -59,7 +59,7 @@ index 8c91af5..0aa4891 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>archetypes_2.8.1</artifactId>
 +    <artifactId>archetypes_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
    </parent>
 -  <artifactId>lift-archetype-jpa-blank-single_2.8.1</artifactId>
 +  <artifactId>lift-archetype-jpa-blank-single_2.8.0</artifactId>
@@ -76,7 +76,7 @@ index f680854..725f932 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>archetypes_2.8.1</artifactId>
 +    <artifactId>archetypes_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
    </parent>
 -  <artifactId>lift-archetype-jpa-blank_2.8.1</artifactId>
 +  <artifactId>lift-archetype-jpa-blank_2.8.0</artifactId>
@@ -93,7 +93,7 @@ index 9f3a16c..694f388 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>archetypes_2.8.1</artifactId>
 +    <artifactId>archetypes_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
    </parent>
 -  <artifactId>lift-archetype-sbt_2.8.1</artifactId>
 +  <artifactId>lift-archetype-sbt_2.8.0</artifactId>
@@ -110,7 +110,7 @@ index 57884c9..e017e1e 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>lift-parent_2.8.1</artifactId>
 +    <artifactId>lift-parent_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
      <relativePath>../resources/lift-parent/pom.xml</relativePath>
    </parent>
 -  <artifactId>archetypes_2.8.1</artifactId>
@@ -128,7 +128,7 @@ index 25c1841..1a938b7 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>JPADemo-Master_2.8.1</artifactId>
 +    <artifactId>JPADemo-Master_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
    </parent>
  
 -  <artifactId>JPADemo-spa_2.8.1</artifactId>
@@ -146,7 +146,7 @@ index 25e6ecd..02be9c9 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>JPADemo-Master_2.8.1</artifactId>
 +    <artifactId>JPADemo-Master_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
    </parent>
  
 -  <artifactId>JPADemo-web_2.8.1</artifactId>
@@ -164,7 +164,7 @@ index 494d9a4..f996e5a 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>examples_2.8.1</artifactId>
 +    <artifactId>examples_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
    </parent>
  
 -  <artifactId>JPADemo-Master_2.8.1</artifactId>
@@ -182,7 +182,7 @@ index 0784d57..9629505 100644
          <groupId>net.liftweb</groupId>
 -        <artifactId>examples_2.8.1</artifactId>
 +        <artifactId>examples_2.8.0</artifactId>
-         <version>2.3-SNAPSHOT</version>
+         <version>2.3-M1</version>
      </parent>
  
 -    <artifactId>lift-example_2.8.1</artifactId>
@@ -200,7 +200,7 @@ index e8d3d22..008a9bb 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>examples-osgi_2.8.1</artifactId>
 +    <artifactId>examples-osgi_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
    </parent>
  
 -  <artifactId>examples-osgi-hello_2.8.1</artifactId>
@@ -218,7 +218,7 @@ index a1e01e7..4b03ba1 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>examples_2.8.1</artifactId>
 +    <artifactId>examples_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
    </parent>
  
 -  <artifactId>examples-osgi_2.8.1</artifactId>
@@ -236,7 +236,7 @@ index 8e12c4a..bc25189 100755
      <groupId>net.liftweb</groupId>
 -    <artifactId>examples_2.8.1</artifactId>
 +    <artifactId>examples_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
    </parent>
  
 -  <artifactId>lift-flot-demo_2.8.1</artifactId>
@@ -254,7 +254,7 @@ index ab609cf..f507be4 100644
        <groupId>net.liftweb</groupId>
 -      <artifactId>examples_2.8.1</artifactId>
 +      <artifactId>examples_2.8.0</artifactId>
-       <version>2.3-SNAPSHOT</version>
+       <version>2.3-M1</version>
    </parent>
  
 -  <artifactId>hellodarwin_2.8.1</artifactId>
@@ -272,7 +272,7 @@ index 7ae3319..89180f2 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>examples_2.8.1</artifactId>
 +    <artifactId>examples_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
    </parent>
  
 -  <artifactId>lift-hellofbc_2.8.1</artifactId>
@@ -290,7 +290,7 @@ index 279039a..504ebe7 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>examples_2.8.1</artifactId>
 +    <artifactId>examples_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
    </parent>
  
 -  <artifactId>lift-hellolift_2.8.1</artifactId>
@@ -308,7 +308,7 @@ index 54ba7a5..88ecd34 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>examples_2.8.1</artifactId>
 +    <artifactId>examples_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
    </parent>
  
 -  <artifactId>lift-hello-scalate_2.8.1</artifactId>
@@ -326,7 +326,7 @@ index 41d1089..6b74a84 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>examples_2.8.1</artifactId>
 +    <artifactId>examples_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
    </parent>
  
 -  <artifactId>http-authentication_2.8.1</artifactId>
@@ -344,7 +344,7 @@ index 6d687f6..5e2c7d4 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>lift-parent_2.8.1</artifactId>
 +    <artifactId>lift-parent_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
      <relativePath>../resources/lift-parent/pom.xml</relativePath>
    </parent>
 -  <artifactId>examples_2.8.1</artifactId>
@@ -362,7 +362,7 @@ index 124729d..5052558 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>examples_2.8.1</artifactId>
 +    <artifactId>examples_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
    </parent>
  
 -  <artifactId>skittr-example_2.8.1</artifactId>
@@ -380,7 +380,7 @@ index ccf6512..4b98994 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>lift-base_2.8.1</artifactId>
 +    <artifactId>lift-base_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
    </parent>
 -  <artifactId>lift-actor_2.8.1</artifactId>
 +  <artifactId>lift-actor_2.8.0</artifactId>
@@ -397,7 +397,7 @@ index d75a59a..8338021 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>lift-base_2.8.1</artifactId>
 +    <artifactId>lift-base_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
    </parent>
 -  <artifactId>lift-common_2.8.1</artifactId>
 +  <artifactId>lift-common_2.8.0</artifactId>
@@ -414,7 +414,7 @@ index 397447a..f9d1dce 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>lift-base_2.8.1</artifactId>
 +    <artifactId>lift-base_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
    </parent>
 -  <artifactId>lift-json-ext_2.8.1</artifactId>
 +  <artifactId>lift-json-ext_2.8.0</artifactId>
@@ -431,7 +431,7 @@ index aa830c9..7dc437a 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>lift-base_2.8.1</artifactId>
 +    <artifactId>lift-base_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
    </parent>
 -  <artifactId>lift-json_2.8.1</artifactId>
 +  <artifactId>lift-json_2.8.0</artifactId>
@@ -448,7 +448,7 @@ index 2d54641..955edb8 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>lift-base_2.8.1</artifactId>
 +    <artifactId>lift-base_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
    </parent>
 -  <artifactId>lift-util_2.8.1</artifactId>
 +  <artifactId>lift-util_2.8.0</artifactId>
@@ -465,7 +465,7 @@ index a5c9a4b..a833597 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>lift-base_2.8.1</artifactId>
 +    <artifactId>lift-base_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
    </parent>
 -  <artifactId>lift-webkit_2.8.1</artifactId>
 +  <artifactId>lift-webkit_2.8.0</artifactId>
@@ -482,7 +482,7 @@ index 786dc4d..1c03631 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>framework_2.8.1</artifactId>
 +    <artifactId>framework_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
    </parent>
 -  <artifactId>lift-base_2.8.1</artifactId>
 +  <artifactId>lift-base_2.8.0</artifactId>
@@ -499,7 +499,7 @@ index 82886a7..bc7cbde 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>lift-modules_2.8.1</artifactId>
 +    <artifactId>lift-modules_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
    </parent>
 -  <artifactId>lift-amqp_2.8.1</artifactId>
 +  <artifactId>lift-amqp_2.8.0</artifactId>
@@ -516,7 +516,7 @@ index 1ec1664..96dd021 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>lift-modules_2.8.1</artifactId>
 +    <artifactId>lift-modules_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
    </parent>
 -  <artifactId>lift-facebook_2.8.1</artifactId>
 +  <artifactId>lift-facebook_2.8.0</artifactId>
@@ -533,7 +533,7 @@ index f1da0a4..15d513a 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>lift-modules_2.8.1</artifactId>
 +    <artifactId>lift-modules_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
    </parent>
 -  <artifactId>lift-imaging_2.8.1</artifactId>
 +  <artifactId>lift-imaging_2.8.0</artifactId>
@@ -550,7 +550,7 @@ index 6201240..0a2e26f 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>lift-modules_2.8.1</artifactId>
 +    <artifactId>lift-modules_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
    </parent>
 -  <artifactId>lift-jta_2.8.1</artifactId>
 +  <artifactId>lift-jta_2.8.0</artifactId>
@@ -567,7 +567,7 @@ index 1ce9544..56dd38a 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>lift-modules_2.8.1</artifactId>
 +    <artifactId>lift-modules_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
    </parent>
 -  <artifactId>lift-ldap_2.8.1</artifactId>
 +  <artifactId>lift-ldap_2.8.0</artifactId>
@@ -584,7 +584,7 @@ index 1ad0572..15f2f2e 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>lift-modules_2.8.1</artifactId>
 +    <artifactId>lift-modules_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
    </parent>
 -  <artifactId>lift-machine_2.8.1</artifactId>
 +  <artifactId>lift-machine_2.8.0</artifactId>
@@ -601,7 +601,7 @@ index 9b527de..a77c070 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>lift-modules_2.8.1</artifactId>
 +    <artifactId>lift-modules_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
    </parent>
 -  <artifactId>lift-oauth-mapper_2.8.1</artifactId>
 +  <artifactId>lift-oauth-mapper_2.8.0</artifactId>
@@ -618,7 +618,7 @@ index b248ee5..db57f00 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>lift-modules_2.8.1</artifactId>
 +    <artifactId>lift-modules_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
    </parent>
 -  <artifactId>lift-oauth_2.8.1</artifactId>
 +  <artifactId>lift-oauth_2.8.0</artifactId>
@@ -635,7 +635,7 @@ index ef0842f..ed44fe1 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>lift-modules_2.8.1</artifactId>
 +    <artifactId>lift-modules_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
    </parent>
 -  <artifactId>lift-openid_2.8.1</artifactId>
 +  <artifactId>lift-openid_2.8.0</artifactId>
@@ -652,7 +652,7 @@ index 4b758de..ad5d50c 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>lift-modules_2.8.1</artifactId>
 +    <artifactId>lift-modules_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
    </parent>
 -  <artifactId>lift-osgi_2.8.1</artifactId>
 +  <artifactId>lift-osgi_2.8.0</artifactId>
@@ -669,7 +669,7 @@ index 8c92f15..c2bf978 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>lift-modules_2.8.1</artifactId>
 +    <artifactId>lift-modules_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
    </parent>
 -  <artifactId>lift-paypal_2.8.1</artifactId>
 +  <artifactId>lift-paypal_2.8.0</artifactId>
@@ -686,7 +686,7 @@ index 9c19880..f6967ee 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>lift-modules_2.8.1</artifactId>
 +    <artifactId>lift-modules_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
    </parent>
 -  <artifactId>lift-scalate_2.8.1</artifactId>
 +  <artifactId>lift-scalate_2.8.0</artifactId>
@@ -703,7 +703,7 @@ index 2faf138..68a98a5 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>lift-modules_2.8.1</artifactId>
 +    <artifactId>lift-modules_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
    </parent>
 -  <artifactId>lift-testkit_2.8.1</artifactId>
 +  <artifactId>lift-testkit_2.8.0</artifactId>
@@ -720,7 +720,7 @@ index ace7772..ba91659 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>lift-modules_2.8.1</artifactId>
 +    <artifactId>lift-modules_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
    </parent>
 -  <artifactId>lift-textile_2.8.1</artifactId>
 +  <artifactId>lift-textile_2.8.0</artifactId>
@@ -737,7 +737,7 @@ index 3143976..68f2e71 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>lift-modules_2.8.1</artifactId>
 +    <artifactId>lift-modules_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
    </parent>
 -  <artifactId>lift-widgets_2.8.1</artifactId>
 +  <artifactId>lift-widgets_2.8.0</artifactId>
@@ -754,7 +754,7 @@ index 0552cb1..9208657 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>lift-modules_2.8.1</artifactId>
 +    <artifactId>lift-modules_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
    </parent>
 -  <artifactId>lift-wiring_2.8.1</artifactId>
 +  <artifactId>lift-wiring_2.8.0</artifactId>
@@ -771,7 +771,7 @@ index bd2a3e1..a8b0d9d 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>lift-modules_2.8.1</artifactId>
 +    <artifactId>lift-modules_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
    </parent>
 -  <artifactId>lift-wizard_2.8.1</artifactId>
 +  <artifactId>lift-wizard_2.8.0</artifactId>
@@ -788,7 +788,7 @@ index 9d2a000..2d25c70 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>lift-modules_2.8.1</artifactId>
 +    <artifactId>lift-modules_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
    </parent>
 -  <artifactId>lift-xmpp_2.8.1</artifactId>
 +  <artifactId>lift-xmpp_2.8.0</artifactId>
@@ -805,7 +805,7 @@ index e08e4be..6655187 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>framework_2.8.1</artifactId>
 +    <artifactId>framework_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
    </parent>
 -  <artifactId>lift-modules_2.8.1</artifactId>
 +  <artifactId>lift-modules_2.8.0</artifactId>
@@ -822,7 +822,7 @@ index 56a28be..9799d44 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>lift-persistence_2.8.1</artifactId>
 +    <artifactId>lift-persistence_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
    </parent>
 -  <artifactId>lift-couchdb_2.8.1</artifactId>
 +  <artifactId>lift-couchdb_2.8.0</artifactId>
@@ -839,7 +839,7 @@ index 3a700dc..534d8a4 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>lift-persistence_2.8.1</artifactId>
 +    <artifactId>lift-persistence_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
    </parent>
 -  <artifactId>lift-db_2.8.1</artifactId>
 +  <artifactId>lift-db_2.8.0</artifactId>
@@ -856,7 +856,7 @@ index bc85471..e827e43 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>lift-persistence_2.8.1</artifactId>
 +    <artifactId>lift-persistence_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
    </parent>
 -  <artifactId>lift-jpa_2.8.1</artifactId>
 +  <artifactId>lift-jpa_2.8.0</artifactId>
@@ -873,7 +873,7 @@ index 4adce86..fc9a27b 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>lift-persistence_2.8.1</artifactId>
 +    <artifactId>lift-persistence_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
    </parent>
 -  <artifactId>lift-mapper_2.8.1</artifactId>
 +  <artifactId>lift-mapper_2.8.0</artifactId>
@@ -890,7 +890,7 @@ index 0a4106b..b08aa5e 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>lift-persistence_2.8.1</artifactId>
 +    <artifactId>lift-persistence_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
    </parent>
 -  <artifactId>lift-mongodb-record_2.8.1</artifactId>
 +  <artifactId>lift-mongodb-record_2.8.0</artifactId>
@@ -907,7 +907,7 @@ index 03f3cee..9410422 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>lift-persistence_2.8.1</artifactId>
 +    <artifactId>lift-persistence_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
    </parent>
 -  <artifactId>lift-mongodb_2.8.1</artifactId>
 +  <artifactId>lift-mongodb_2.8.0</artifactId>
@@ -924,7 +924,7 @@ index 50550be..5aeb803 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>lift-persistence_2.8.1</artifactId>
 +    <artifactId>lift-persistence_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
    </parent>
 -  <artifactId>lift-proto_2.8.1</artifactId>
 +  <artifactId>lift-proto_2.8.0</artifactId>
@@ -941,7 +941,7 @@ index 84a4b0b..7ab9bc3 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>lift-persistence_2.8.1</artifactId>
 +    <artifactId>lift-persistence_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
    </parent>
 -  <artifactId>lift-record_2.8.1</artifactId>
 +  <artifactId>lift-record_2.8.0</artifactId>
@@ -958,7 +958,7 @@ index 2ebcf30..2183990 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>lift-persistence_2.8.1</artifactId>
 +    <artifactId>lift-persistence_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
    </parent>
 -  <artifactId>lift-squeryl-record_2.8.1</artifactId>
 +  <artifactId>lift-squeryl-record_2.8.0</artifactId>
@@ -975,7 +975,7 @@ index 800a3da..c5b2495 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>framework_2.8.1</artifactId>
 +    <artifactId>framework_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
    </parent>
 -  <artifactId>lift-persistence_2.8.1</artifactId>
 +  <artifactId>lift-persistence_2.8.0</artifactId>
@@ -992,7 +992,7 @@ index 441ec49..301cfcc 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>lift-parent_2.8.1</artifactId>
 +    <artifactId>lift-parent_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
      <relativePath>../resources/lift-parent/pom.xml</relativePath>
    </parent>
 -  <artifactId>framework_2.8.1</artifactId>
@@ -1010,7 +1010,7 @@ index d4d49fa..eaf7645 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>lift-parent_2.8.1</artifactId>
 +    <artifactId>lift-parent_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
      <relativePath>resources/lift-parent/pom.xml</relativePath>
    </parent>
 diff --git resources/lift-parent/pom.xml resources/lift-parent/pom.xml
@@ -1023,7 +1023,7 @@ index ff6bcf1..4d92003 100644
    <groupId>net.liftweb</groupId>
 -  <artifactId>lift-parent_2.8.1</artifactId>
 +  <artifactId>lift-parent_2.8.0</artifactId>
-   <version>2.3-SNAPSHOT</version>
+   <version>2.3-M1</version>
    <packaging>pom</packaging>
  
 @@ -291,8 +291,8 @@
@@ -1047,7 +1047,7 @@ index 4d73901..58b0aca 100644
      <groupId>net.liftweb</groupId>
 -    <artifactId>lift-parent_2.8.1</artifactId>
 +    <artifactId>lift-parent_2.8.0</artifactId>
-     <version>2.3-SNAPSHOT</version>
+     <version>2.3-M1</version>
      <relativePath>../lift-parent/pom.xml</relativePath>
    </parent>
 -  <artifactId>lift-site-skin_2.8.1</artifactId>
