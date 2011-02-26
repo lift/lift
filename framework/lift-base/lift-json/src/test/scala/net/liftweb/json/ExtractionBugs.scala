@@ -39,9 +39,9 @@ object ExtractionBugs extends Specification {
   // as it depends on non-guaranteed JVM compilation- and runtime behavior. It should however never fail with the
   // new fix in.
   "Extraction should always choose constructor with the most arguments if more than one constructor exists" in {
-	val args = primaryConstructorArgs(classOf[Author])
-	println("args")
-	args.size mustEqual 4
+    val args = primaryConstructorArgs(classOf[Author])
+    println("args")
+    args.size mustEqual 4
   }
 
   case class OptionOfInt(opt: Option[Int])
