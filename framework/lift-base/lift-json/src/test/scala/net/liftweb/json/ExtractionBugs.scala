@@ -19,6 +19,7 @@ package json
 
 import org.specs.Specification
 import org.specs.runner.{Runner, JUnit}
+import Meta.Reflection._
 
 class ExtractionBugsTest extends Runner(ExtractionBugs) with JUnit
 object ExtractionBugs extends Specification {  
@@ -34,7 +35,21 @@ object ExtractionBugs extends Specification {
     Extraction.decompose(m).extract[PMap] mustEqual m
   }
 
+  // this test will be non-deterministic an may pass some/most of the time even with the old faulty behavior,
+  // as it depends on non-guaranteed JVM compilation- and runtime behavior. It should however never fail with the
+  // new fix in.
+  "Extraction should always choose constructor with the most arguments if more than one constructor exists" in {
+	val args = primaryConstructorArgs(classOf[Author])
+	println("args")
+	args.size mustEqual 4
+  }
+
   case class OptionOfInt(opt: Option[Int])
 
   case class PMap(m: Map[String, List[String]])
+
+  // case class with more than one constructor
+  case class Author(val id: Long, val firstName: String, var lastName: String, var email: Option[String]){
+    def this() = this(0,"John","Doe",Some(""))
+  }
 }
