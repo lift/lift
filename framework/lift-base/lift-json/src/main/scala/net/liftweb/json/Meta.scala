@@ -185,7 +185,13 @@ private[json] object Meta {
       cachedConstructorArgs.memoize(constructor, argsInfo(_))
     }
 
-    def primaryConstructorArgs(c: Class[_]) = constructorArgs(c.getDeclaredConstructors()(0))
+    def primaryConstructorArgs(c: Class[_]) = constructorArgs({var constructor: java.lang.reflect.Constructor[_] = null
+	    	c.getDeclaredConstructors.foreach(cons =>{
+	      		if (constructor == null) constructor = cons
+	      		if(cons.getParameterTypes.size > constructor.getParameterTypes.size) constructor = cons
+	    	})
+			constructor
+		})
 
     def typeParameters(t: Type, k: Kind): List[Class[_]] = {
       def term(i: Int) = t match {
