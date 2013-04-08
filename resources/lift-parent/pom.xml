@@ -21,6 +21,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
+  <parent>
+    <groupId>org.sonatype.oss</groupId>
+    <artifactId>oss-parent</artifactId>
+    <version>7</version>
+  </parent>
+
   <!--
   Global parent project model. Defines the settings common to all the projects in Lift.
 
@@ -38,7 +44,7 @@
   -->
   <groupId>net.liftweb</groupId>
   <artifactId>lift-parent_2.7.7</artifactId>
-  <version>2.2</version>
+  <version>2.2.1</version>
   <packaging>pom</packaging>
 
   <!--
@@ -267,8 +273,12 @@
     <url>http://hudson.scala-tools.org/job/lift-parent/</url>
     <!-- <notifiers /> -->
   </ciManagement>
+  <!--
   <distributionManagement>
     <repository>
+      <id>oss.sonatype.org</id>
+      <name>Sonatype deployment</name>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
       <id>nexus.scala-tools.org</id>
       <name>Scala-Tools Distribution Repository for Releases</name>
       <url>http://nexus.scala-tools.org/content/repositories/releases</url>
@@ -279,10 +289,9 @@
       <url>http://nexus.scala-tools.org/content/repositories/snapshots</url>
       <uniqueVersion>false</uniqueVersion>
     </snapshotRepository>
-    <!-- Site omitted, each project/profile must provide their own -->
-    <!--<site />-->
   </distributionManagement>
-  <properties>
+  -->
+    <properties>
     <!-- Common plugin settings -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>${project.build.sourceEncoding}</project.reporting.outputEncoding>
